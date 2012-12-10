@@ -76,12 +76,12 @@ public class LazyLoadWrapperConnector extends
         LLWState state2 = getState();
 
         VConsole.log("New state for LLW");
-        VConsole.log("Mode: " + state2.getMode());
+        VConsole.log("Mode: " + state2.mode);
         VConsole.log("Placeholder visible delay: "
-                + state2.getPlaceholderVisibleDelay());
+                + state2.placeholderVisibleDelay);
 
-        getWidget().setPlaceHolderSize(getState().getPlaceholderHeight(),
-                getState().getPlaceholderWidth());
+        getWidget().setPlaceHolderSize(getState().placeholderHeight,
+                getState().placeholderWidth);
 
     }
 
@@ -136,7 +136,7 @@ public class LazyLoadWrapperConnector extends
             // }
             // }
 
-            if (getState().getMode() != MODE_LAZY_LOAD_DRAW) {
+            if (getState().mode != MODE_LAZY_LOAD_DRAW) {
                 getWidget().lateDrawChild(getChildComponents());
             }
         }
@@ -203,17 +203,13 @@ public class LazyLoadWrapperConnector extends
             return;
         }
 
-        if (getState().getMode() == MODE_LAZY_LOAD_DRAW) {
+        if (getState().mode == MODE_LAZY_LOAD_DRAW) {
             getWidget().lateDrawChild(getChildComponents());
         }
 
         else {
-            // client.updateVariable(wrappersPaintableId, WIDGET_VISIBLE_ID,
-            // true,
-            // true);
             rpc.onWidgetVisible();
         }
-
     }
 
     public void checkVisibility() {
@@ -223,7 +219,7 @@ public class LazyLoadWrapperConnector extends
         if (getWidget().isVisibleInsideParent()) {
             visibilityPollingTimer.removeLLW(this);
 
-            if (getState().getPlaceholderVisibleDelay() == 0) {
+            if (getState().placeholderVisibleDelay == 0) {
                 widgetIsVible();
 
             } else {
@@ -231,8 +227,7 @@ public class LazyLoadWrapperConnector extends
                     createVisibleDelayTimer();
                 }
 
-                visibleDelayTimer.schedule(getState()
-                        .getPlaceholderVisibleDelay());
+                visibleDelayTimer.schedule(getState().placeholderVisibleDelay);
             }
 
         }

@@ -130,7 +130,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      */
     public LazyLoadWrapper(Component lazyloadComponent, int proximity) {
         this(lazyloadComponent);
-        getState().setProximity(proximity);
+        getState().proximity = proximity;
 
     }
 
@@ -151,7 +151,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
             int placeholderVisibleDelay) {
 
         this(lazyloadComponent, proximity);
-        getState().setPlaceholderVisibleDelay(placeholderVisibleDelay);
+        getState().placeholderVisibleDelay = placeholderVisibleDelay;
     }
 
     /**
@@ -374,7 +374,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
             LazyLoadComponentProvider childProvider) {
 
         this(childProvider);
-        getState().setProximity(proximity);
+        getState().proximity = proximity;
     }
 
     /**
@@ -396,7 +396,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
             LazyLoadComponentProvider childProvider) {
 
         this(proximity, childProvider);
-        getState().setPlaceholderVisibleDelay(placeholderVisibleDelay);
+        getState().placeholderVisibleDelay = placeholderVisibleDelay;
 
     }
 
@@ -476,11 +476,8 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
         this(placeHolderWidth, placeHolderHeight, staticContainer,
                 childProvider);
 
-        getState().setProximity(proximity);
-        getState().setPlaceholderVisibleDelay(placeholderVisibleDelay);
-        //
-        // this.proximity = proximity;
-        // this.placeholderVisibleDelay = placeholderVisibleDelay;
+        getState().proximity = proximity;
+        getState().placeholderVisibleDelay = placeholderVisibleDelay;
     }
 
     /*
@@ -511,27 +508,27 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     public void setLazyLoadComponent(Component lazyloadComponent) {
         removeAllComponents();
         this.lazyloadComponent = lazyloadComponent;
-        // super.addComponent(lazyloadComponent);
 
-        // if (lazyloadComponent.getWidthUnits() != Sizeable.UNITS_PERCENTAGE
-        // && lazyloadComponent.getWidth() != -1.0) {
-        // placeholderWidth = lazyloadComponent.getWidth()
-        // + Sizeable.UNIT_SYMBOLS[lazyloadComponent.getWidthUnits()];
-        // } else {
-        // setWidth(lazyloadComponent.getWidth(),
-        // lazyloadComponent.getWidthUnits());
-        // }
-        //
-        // if (lazyloadComponent.getHeightUnits() != Sizeable.UNITS_PERCENTAGE
-        // && lazyloadComponent.getHeight() != -1.0) {
-        // placeholderHeight = lazyloadComponent.getHeight()
-        // + Sizeable.UNIT_SYMBOLS[lazyloadComponent.getHeightUnits()];
-        // } else {
-        // setHeight(lazyloadComponent.getHeight(),
-        // lazyloadComponent.getHeightUnits());
-        // }
+        if (lazyloadComponent.getWidthUnits() != Unit.PERCENTAGE
+                && lazyloadComponent.getWidth() != -1.0) {
+            // getState().placeholderWidth = lazyloadComponent.getWidth()
+            // + Sizeable.UNIT_SYMBOLS[lazyloadComponent.getWidthUnits()];
 
-        requestRepaint();
+            getState().placeholderWidth = lazyloadComponent.getWidth()
+                    + lazyloadComponent.getWidthUnits().getSymbol();
+        } else {
+            setWidth(lazyloadComponent.getWidth(),
+                    lazyloadComponent.getWidthUnits());
+        }
+
+        if (lazyloadComponent.getHeightUnits() != Unit.PERCENTAGE
+                && lazyloadComponent.getHeight() != -1.0) {
+            getState().placeholderHeight = lazyloadComponent.getHeight()
+                    + lazyloadComponent.getHeightUnits().getSymbol();
+        } else {
+            setHeight(lazyloadComponent.getHeight(),
+                    lazyloadComponent.getHeightUnits());
+        }
 
     }
 
@@ -552,17 +549,15 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      * @param height
      */
     public void setPlaceHolderSize(String width, String height) {
-        getState().setPlaceholderHeight(height);
-        getState().setPlaceholderWidth(width);
+        getState().placeholderHeight = height;
+        getState().placeholderWidth = width;
 
-        if (getState().isStaticContainer()) {
+        if (getState().staticContainer) {
             setWidth(width);
             setHeight(height);
         } else {
             setSizeUndefined();
         }
-
-        requestRepaint();
 
     }
 
@@ -573,7 +568,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      * @return placeholderVisibleDelay - the delay in ms
      */
     public int getPlaceholderVisibleDelay() {
-        return getState().getPlaceholderVisibleDelay();
+        return getState().placeholderVisibleDelay;
     }
 
     /**
@@ -584,9 +579,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      *            - the delay in ms
      */
     public void setPlaceholderVisibleDelay(int placeholderVisibleDelay) {
-        getState().setPlaceholderVisibleDelay(placeholderVisibleDelay);
-
-        requestRepaint();
+        getState().placeholderVisibleDelay = placeholderVisibleDelay;
     }
 
     /**
@@ -602,9 +595,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      *            before it's loaded.
      */
     public void setProximity(int proximity) {
-        getState().setProximity(proximity);
-
-        requestRepaint();
+        getState().proximity = proximity;
     }
 
     /**
@@ -612,7 +603,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      * server
      */
     public int getProximity() {
-        return getState().getProximity();
+        return getState().proximity;
     }
 
     /**
@@ -625,12 +616,12 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      */
     public void setMode(int mode) {
         if (mode == MODE_LAZY_LOAD_DRAW || mode == MODE_LAZY_LOAD_FETCH) {
-            getState().setMode(mode);
+            getState().mode = mode;
 
             if (mode == MODE_LAZY_LOAD_DRAW) {
                 setClientSideIsVisible(true);
             }
-            requestRepaint();
+
         }
     }
 
@@ -638,7 +629,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      * Returns the current mode.
      */
     public int getMode() {
-        return getState().getMode();
+        return getState().mode;
     }
 
     /**
@@ -651,21 +642,21 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      * @param staticContainer
      */
     public void setStaticConatiner(boolean staticContainer) {
-        getState().setStaticContainer(staticContainer);
+        getState().staticContainer = staticContainer;
         if (staticContainer) {
-            setWidth(getState().getPlaceholderWidth());
-            setHeight(getState().getPlaceholderHeight());
+            setWidth(getState().placeholderWidth);
+            setHeight(getState().placeholderHeight);
         } else {
             setSizeUndefined();
         }
-        requestRepaint();
+
     }
 
     /**
      * Get the current container mode.
      */
     public boolean getStaticContainer() {
-        return getState().isStaticContainer();
+        return getState().staticContainer;
     }
 
     /**
@@ -681,9 +672,9 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      *            - false: show child component when scrolled into view.
      */
     public void setClientSideIsVisible(boolean visible) {
-        getState().setClientSideIsVisible(visible);
+        getState().clientSideIsVisible = visible;
 
-        if (getState().isClientSideIsVisible()) {
+        if (getState().clientSideIsVisible) {
             if (childProvider != null) {
                 lazyloadComponent = childProvider.onComponentVisible();
             }
@@ -693,13 +684,13 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
                 super.addComponent(lazyloadComponent);
                 lazyloadComponent.markAsDirty();
             }
-            requestRepaint();
+
         } else {
             if (lazyloadComponent != null
                     && lazyloadComponent.getParent() != null
                     && lazyloadComponent.getParent().equals(this)) {
                 super.removeComponent(lazyloadComponent);
-                requestRepaint();
+
             }
         }
 
@@ -717,7 +708,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      * 
      */
     public boolean getClientSideIsVisible() {
-        return getState().isClientSideIsVisible();
+        return getState().clientSideIsVisible;
     }
 
     /*
@@ -857,7 +848,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     @Override
     public Iterator<Component> iterator() {
 
-        if (getState().isClientSideIsVisible()) {
+        if (getState().clientSideIsVisible) {
             return getComponentIterator();
         } else {
             return new ArrayList().iterator();
@@ -868,7 +859,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     @Override
     public boolean isRendered(Component childComponent) {
         System.out.println("Using selective renderer");
-        if (getState().isClientSideIsVisible()) {
+        if (getState().clientSideIsVisible) {
             return true;
         }
 
