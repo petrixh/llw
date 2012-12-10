@@ -11,7 +11,6 @@ import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.Paintable;
-import com.vaadin.client.RenderSpace;
 import com.vaadin.client.UIDL;
 import com.vaadin.client.VCaptionWrapper;
 import com.vaadin.client.VConsole;
@@ -31,11 +30,6 @@ import com.vaadin.client.VConsole;
  */
 
 public class VLazyLoadWrapper extends SimplePanel {
-
-    public interface LLWInterface extends
-            com.vaadin.shared.communication.ServerRpc {
-
-    }
 
     public static final String WRAPPER_AUTOREINIT_ON_REATTACH = "autoreinit";
     /*- Set the CSS class name to allow styling. */
@@ -182,9 +176,10 @@ public class VLazyLoadWrapper extends SimplePanel {
     }
 
     protected void setPlaceHolderSize(String height, String width) {
-        placeholder.getStyle().setProperty("height", height);
-        placeholder.getStyle().setProperty("width", width);
-
+        if (placeholder != null) {
+            placeholder.getStyle().setProperty("height", height);
+            placeholder.getStyle().setProperty("width", width);
+        }
     }
 
     /**
@@ -265,25 +260,25 @@ public class VLazyLoadWrapper extends SimplePanel {
         // Util.getLayout(this).requestLayout(pa);
     }
 
-    /*
-     * Container methods
-     */
-    public RenderSpace getAllocatedSpace(Widget child) {
-
-        // if (staticContainer) {
-        return new RenderSpace(getOffsetWidth(), getOffsetHeight());
-        // }
-        // } else {
-        //
-        // RenderSpace llwRS = Util.getLayout(this).getAllocatedSpace(this);
-        // RenderSpace rs = new RenderSpace(llwRS.getWidth(),
-        // llwRS.getHeight());
-        //
-        // return rs;
-        //
-        // }
-
-    }
+    // /*
+    // * Container methods
+    // */
+    // public RenderSpace getAllocatedSpace(Widget child) {
+    //
+    // // if (staticContainer) {
+    // return new RenderSpace(getOffsetWidth(), getOffsetHeight());
+    // // }
+    // // } else {
+    // //
+    // // RenderSpace llwRS = Util.getLayout(this).getAllocatedSpace(this);
+    // // RenderSpace rs = new RenderSpace(llwRS.getWidth(),
+    // // llwRS.getHeight());
+    // //
+    // // return rs;
+    // //
+    // // }
+    //
+    // }
 
     public boolean hasChildComponent(Widget component) {
 

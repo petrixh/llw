@@ -4,9 +4,6 @@ import java.io.Serializable;
 
 import com.vaadin.annotations.Widgetset;
 import com.vaadin.server.VaadinRequest;
-import com.vaadin.ui.InlineDateField;
-import com.vaadin.ui.Label;
-import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
@@ -22,35 +19,35 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
         VerticalLayout vl = new VerticalLayout();
         setContent(vl);
 
-        vl.addComponent(new Label("Hello!"));
-        LazyLoadWrapper llw = new LazyLoadWrapper();
-        llw.setPlaceHolderSize("150px", "150px");
-        vl.addComponent(llw);
-        llw.setPlaceholderVisibleDelay(2250);
-
-        Panel panel = new Panel();
-        VerticalLayout panelVl = new VerticalLayout();
-        panel.setContent(panelVl);
-        panelVl.addComponent(new Label("Lazily loaded content"));
-        panelVl.addComponent(new InlineDateField());
-
-        llw.setLazyLoadComponent(panel);
-
-        Panel vl2 = new Panel();
-        VerticalLayout panelVl2 = new VerticalLayout();
-        vl2.setContent(panelVl2);
-
-        panelVl2.addComponent(new Label(
-                "Lazily loaded content should look like this!"));
-        panelVl2.addComponent(new InlineDateField());
-
-        vl.addComponent(vl2);
-
-        LazyLoadWrapperDemo llwDemo = new LazyLoadWrapperDemo();
-        vl.addComponent(llwDemo.createDemo().getContent());
-
-        vl.addComponent(new LazyLoadV7Demo().crateLabelsDemo());
-        vl.addComponent(new Panel(new LazyLoadV7Demo().createTableDemo()));
+        // vl.addComponent(new Label("Hello!"));
+        // LazyLoadWrapper llw = new LazyLoadWrapper();
+        // llw.setPlaceHolderSize("150px", "150px");
+        // vl.addComponent(llw);
+        // llw.setPlaceholderVisibleDelay(2250);
+        //
+        // Panel panel = new Panel();
+        // VerticalLayout panelVl = new VerticalLayout();
+        // panel.setContent(panelVl);
+        // panelVl.addComponent(new Label("Lazily loaded content"));
+        // panelVl.addComponent(new InlineDateField());
+        //
+        // llw.setLazyLoadComponent(panel);
+        //
+        // Panel vl2 = new Panel();
+        // VerticalLayout panelVl2 = new VerticalLayout();
+        // vl2.setContent(panelVl2);
+        //
+        // panelVl2.addComponent(new Label(
+        // "Lazily loaded content should look like this!"));
+        // panelVl2.addComponent(new InlineDateField());
+        //
+        // vl.addComponent(vl2);
+        //
+        // LazyLoadWrapperDemo llwDemo = new LazyLoadWrapperDemo();
+        // vl.addComponent(llwDemo.createDemo().getContent());
+        //
+        // vl.addComponent(new LazyLoadV7Demo().crateLabelsDemo());
+        vl.addComponent(new LazyLoadV7Demo().createTableDemo());
 
     }
 

@@ -8,6 +8,7 @@ import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
 import com.vaadin.client.UIDL;
 import com.vaadin.client.VConsole;
+import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
 import com.vaadin.lazyloadwrapper.LazyLoadWrapper;
@@ -19,9 +20,7 @@ public class LazyLoadWrapperConnector extends
 
     private Object wrappersPaintableId;
     private boolean recentlyAttached;
-    // private int visibleDelay = 0;
     private Timer visibleDelayTimer;
-    // private int mode;
 
     public static final int MODE_LAZY_LOAD_FETCH = 1;
     public static final int MODE_LAZY_LOAD_DRAW = 2;
@@ -29,11 +28,7 @@ public class LazyLoadWrapperConnector extends
     /** Polling timer used to check for visibility */
     protected static LLWPoller visibilityPollingTimer;
 
-    @Override
-    protected void init() {
-        super.init();
-
-    }
+    LLWRpc rpc = RpcProxy.create(LLWRpc.class, this);
 
     @Override
     protected Widget createWidget() {
@@ -70,6 +65,7 @@ public class LazyLoadWrapperConnector extends
     public void onConnectorHierarchyChange(ConnectorHierarchyChangeEvent event) {
         // super.onConnectorHierarchyChange(event);
         // TODO do sth here maby.. .
+        updateToThisLLW();
 
     }
 
@@ -132,6 +128,17 @@ public class LazyLoadWrapperConnector extends
             // visibilityPollingTimer.removeLLW(this);
             // drawChildFromUIDL(uidl, client);
             // }
+            // for (ComponentConnector componentConnector :
+            // getChildComponents()) {
+            // if (componentConnector instanceof ManagedLayout) {
+            // getLayoutManager().setNeedsLayout(
+            // (ManagedLayout) componentConnector);
+            // }
+            // }
+
+            if (getState().getMode() != MODE_LAZY_LOAD_DRAW) {
+                getWidget().lateDrawChild(getChildComponents());
+            }
         }
 
     }
@@ -158,6 +165,7 @@ public class LazyLoadWrapperConnector extends
 
         // Tell the child to update itself from UIDL
         // p.updateFromUIDL(childUIDL, client);
+
     }
 
     /**
@@ -188,25 +196,23 @@ public class LazyLoadWrapperConnector extends
     private void widgetIsVible() {
         VConsole.log("In WIDGETISVISIBLE");
 
-        // if (!getWidget().isAttached()) {
-        // VConsole.log("The wrapper with PID: "
-        // + wrappersPaintableId
-        // +
-        // " is no longer attached to the DOM, ignoring paint of child component... ");
-        // return;
-        // }
+        if (!getWidget().isAttached()) {
+            VConsole.log("The wrapper with PID: "
+                    + wrappersPaintableId
+                    + " is no longer attached to the DOM, ignoring paint of child component... ");
+            return;
+        }
 
         if (getState().getMode() == MODE_LAZY_LOAD_DRAW) {
             getWidget().lateDrawChild(getChildComponents());
         }
 
-        // getWidget().getElement().getStyle().clearHeight();
-        // getWidget().getElement().getStyle().setWidth(100, Unit.PC);
-
-        // else {
-        // client.updateVariable(wrappersPaintableId, WIDGET_VISIBLE_ID, true,
-        // true);
-        // }
+        else {
+            // client.updateVariable(wrappersPaintableId, WIDGET_VISIBLE_ID,
+            // true,
+            // true);
+            rpc.onWidgetVisible();
+        }
 
     }
 

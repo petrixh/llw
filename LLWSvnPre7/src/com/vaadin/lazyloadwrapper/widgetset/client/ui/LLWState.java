@@ -7,7 +7,7 @@ public class LLWState extends AbstractComponentState {
     /**
      * Current mode of the LLW
      */
-    private int mode = LazyLoadWrapperConnector.MODE_LAZY_LOAD_DRAW;
+    private int mode = LazyLoadWrapperConnector.MODE_LAZY_LOAD_FETCH;
 
     private boolean clientSideIsVisible = false;
     private boolean autoReinitLazyLoad = false;

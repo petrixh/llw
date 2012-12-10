@@ -15,8 +15,6 @@ public class LLWPoller extends Timer {
 
     @Override
     public void run() {
-        // VLazyLoadWrapper[] currListeners = new VLazyLoadWrapper[1];
-        // currListeners = listeners.toArray(currListeners);
         for (LazyLoadWrapperConnector llw : new ArrayList<LazyLoadWrapperConnector>(
                 listeners)) {
             llw.checkVisibility();
@@ -34,7 +32,7 @@ public class LLWPoller extends Timer {
 
         listeners.add(llw);
         if (listeners.size() == 1) {
-            scheduleRepeating(250);
+            scheduleRepeating(1250);
         }
     }
 

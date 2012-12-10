@@ -1,12 +1,15 @@
 package com.vaadin.lazyloadwrapper;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Iterator;
 
+import com.vaadin.lazyloadwrapper.widgetset.client.ui.LLWRpc;
 import com.vaadin.lazyloadwrapper.widgetset.client.ui.LLWState;
 import com.vaadin.lazyloadwrapper.widgetset.client.ui.LazyLoadWrapperConnector;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.SelectiveRenderer;
 
 /**
  * Server side component for the VLazyLoadingWrapper widget.
@@ -46,7 +49,8 @@ import com.vaadin.ui.Component;
  */
 
 @SuppressWarnings("serial")
-public class LazyLoadWrapper extends AbstractComponentContainer {
+public class LazyLoadWrapper extends AbstractComponentContainer implements
+        SelectiveRenderer {
 
     /**
      * Default mode: The lazy load wrapper client side will ask the server side
@@ -78,6 +82,17 @@ public class LazyLoadWrapper extends AbstractComponentContainer {
      */
     private LazyLoadComponentProvider childProvider = null;
 
+    private LLWRpc serverRpc = new LLWRpc() {
+
+        @Override
+        public void onWidgetVisible() {
+
+            System.out.println("Server-side go widget visible call");
+            setClientSideIsVisible(true);
+
+        }
+    };
+
     /*
      * CONSTRUCTORS FOR DEFAULT BEHAVIOR
      */
@@ -87,6 +102,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer {
      */
     public LazyLoadWrapper() {
         super();
+        registerRpc(serverRpc);
     }
 
     /**
@@ -495,7 +511,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer {
     public void setLazyLoadComponent(Component lazyloadComponent) {
         removeAllComponents();
         this.lazyloadComponent = lazyloadComponent;
-        super.addComponent(lazyloadComponent);
+        // super.addComponent(lazyloadComponent);
 
         // if (lazyloadComponent.getWidthUnits() != Sizeable.UNITS_PERCENTAGE
         // && lazyloadComponent.getWidth() != -1.0) {
@@ -675,6 +691,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer {
             // Attach child to container.
             if (lazyloadComponent != null) {
                 super.addComponent(lazyloadComponent);
+                lazyloadComponent.markAsDirty();
             }
             requestRepaint();
         } else {
@@ -839,7 +856,23 @@ public class LazyLoadWrapper extends AbstractComponentContainer {
 
     @Override
     public Iterator<Component> iterator() {
-        return getComponentIterator();
 
+        if (getState().isClientSideIsVisible()) {
+            return getComponentIterator();
+        } else {
+            return new ArrayList().iterator();
+        }
+
+    }
+
+    @Override
+    public boolean isRendered(Component childComponent) {
+        System.out.println("Using selective renderer");
+        if (getState().isClientSideIsVisible()) {
+            return true;
+        }
+
+        System.out.println("Selectiver renderer returning false");
+        return false;
     }
 }

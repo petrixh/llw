@@ -40,6 +40,10 @@ public class LazyLoadV7Demo {
         VerticalLayout vl = new VerticalLayout();
 
         Table t = new Table();
+        t.setWidth("100px");
+        t.setHeight("200px");
+        // t.setPageLength(5);
+
         IndexedContainer ic = new IndexedContainer();
         ic.addContainerProperty("Name", String.class, null);
         ic.addContainerProperty("value", Integer.class, 0);
@@ -53,11 +57,15 @@ public class LazyLoadV7Demo {
 
         t.setContainerDataSource(ic);
 
-        Panel p = new Panel(new VerticalLayout());
+        VerticalLayout panelLayout = new VerticalLayout();
+        Panel p = new Panel(panelLayout);
+        panelLayout.addComponent(t);
 
         LazyLoadWrapper tableLLW = new LazyLoadWrapper(t, 0, 1000);
-        tableLLW.setHeight("200px");
-        tableLLW.setWidth("200px");
+        // tableLLW.setHeight("200px");
+        // tableLLW.setWidth("200px");
+
+        // tableLLW.setStaticConatiner(true);
         vl.addComponent(tableLLW);
         // vl.addComponent(t);
 
