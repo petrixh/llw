@@ -4,7 +4,8 @@ import java.util.ArrayList;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
-import com.vaadin.terminal.ThemeResource;
+import com.vaadin.server.ThemeResource;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Table;
@@ -16,6 +17,7 @@ public class TableOutOfSync extends Window {
     private Table table;
     private IndexedContainer ic;
     private ArrayList<String> objIDs = new ArrayList<String>();
+    private VerticalLayout mainLayout;
 
     // private Table.ColumnGenerator colGen = new ColumnGenerator() {
     //
@@ -29,6 +31,8 @@ public class TableOutOfSync extends Window {
 
     public TableOutOfSync() {
 
+        mainLayout = new VerticalLayout();
+
         addComponent(new Label("Test of LLW out of sync..."));
         table = new Table();
         createTableContent();
@@ -39,6 +43,10 @@ public class TableOutOfSync extends Window {
         table.setPageLength(2);
         table.setCacheRate(0);
 
+    }
+
+    public void addComponent(Component c) {
+        mainLayout.addComponent(c);
     }
 
     public void createTableContent() {

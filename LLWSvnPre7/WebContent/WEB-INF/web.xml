@@ -9,12 +9,10 @@
 	</context-param>
 	<servlet>
 		<servlet-name>LazyLoadWrapper Application</servlet-name>
-		<servlet-class>
-		com.vaadin.terminal.gwt.server.ApplicationServlet</servlet-class>
-		<init-param>
-			<description>
-			Vaadin application class to start</description>
-			<param-name>application</param-name>
+		 <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
+        <init-param>
+            <description>Vaadin UI</description>
+            <param-name>UI</param-name>
 			<param-value>com.vaadin.lazyloadwrapper.LazyLoadWrapperApplication</param-value>
 		</init-param>
 		<init-param>

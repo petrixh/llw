@@ -16,16 +16,27 @@ public class LazyLoadAttachDetach extends Window {
 
     private Panel p;
     private GridLayout gl = new GridLayout(4, 4);
+    private VerticalLayout mainLayout;
 
     public LazyLoadAttachDetach() {
         super();
-        setName("2.0");
+        setCaption("2.0");
         gl.setSizeFull();
         addComponent(gl);
         gl.setMargin(true);
 
         gl.addComponent(createBasicExample(), 0, 0);
         addComponent(createTableExample());
+
+    }
+
+    public void addComponent(Component c) {
+        if (mainLayout == null) {
+            mainLayout = new VerticalLayout();
+            setContent(mainLayout);
+        }
+
+        mainLayout.addComponent(c);
 
     }
 
@@ -59,8 +70,8 @@ public class LazyLoadAttachDetach extends Window {
         llw.setMode(llw.MODE_LAZY_LOAD_FETCH);
         llw.setPlaceholderVisibleDelay(2000);
 
-        llw.setAutoReinitLazyLoad(true);
-        p.addComponent(llw);
+        // llw.setAutoReinitLazyLoad(true);
+        // p.addComponent(llw);
 
         return root;
     }

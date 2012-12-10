@@ -2,3 +2,7 @@
 /.classpath
 /.project
 /GWT development mode for LazyLoadWrapper.launch
+/GWT development mode for LLWSvnPre7.launch
+/build
+/ivy.xml
+/ivysettings.xml
