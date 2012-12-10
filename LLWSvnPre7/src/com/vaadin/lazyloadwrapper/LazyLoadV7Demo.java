@@ -3,6 +3,7 @@ package com.vaadin.lazyloadwrapper;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Label;
+import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
 import com.vaadin.ui.VerticalLayout;
 
@@ -52,11 +53,13 @@ public class LazyLoadV7Demo {
 
         t.setContainerDataSource(ic);
 
+        Panel p = new Panel(new VerticalLayout());
+
         LazyLoadWrapper tableLLW = new LazyLoadWrapper(t, 0, 1000);
         tableLLW.setHeight("200px");
         tableLLW.setWidth("200px");
-        // vl.addComponent(tableLLW);
-        vl.addComponent(t);
+        vl.addComponent(tableLLW);
+        // vl.addComponent(t);
 
         return vl;
     }
