@@ -15,11 +15,15 @@ public class LLWPoller extends Timer {
 
     @Override
     public void run() {
+        // long start = System.currentTimeMillis();
         for (LazyLoadWrapperConnector llw : new ArrayList<LazyLoadWrapperConnector>(
                 listeners)) {
             llw.checkVisibility();
         }
 
+        // long stop = System.currentTimeMillis();
+        // VConsole.log("Checking LLW visibility for all LLW:s took: "
+        // + (stop - start) + " ms");
     }
 
     /**
@@ -32,7 +36,7 @@ public class LLWPoller extends Timer {
 
         listeners.add(llw);
         if (listeners.size() == 1) {
-            scheduleRepeating(1250);
+            scheduleRepeating(250);
         }
     }
 

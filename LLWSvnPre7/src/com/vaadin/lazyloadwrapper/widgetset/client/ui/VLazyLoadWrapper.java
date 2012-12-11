@@ -1,16 +1,13 @@
 package com.vaadin.lazyloadwrapper.widgetset.client.ui;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.ComponentConnector;
-import com.vaadin.client.Paintable;
 import com.vaadin.client.UIDL;
 import com.vaadin.client.VCaptionWrapper;
 import com.vaadin.client.VConsole;
@@ -93,81 +90,9 @@ public class VLazyLoadWrapper extends SimplePanel {
         getElement().appendChild(placeholder);
     }
 
-    // private boolean checkForNeedOfAutomaticReinitOnReattach(UIDL uidl) {
-    // if (lazyLoadPaintableComponent == null
-    // && uidl.getBooleanAttribute(WIDGET_VISIBLE_ID)
-    // && recentlyAttached) {
-    //
-    // VConsole.error("Found that we should reinit the wrapper... ");
-    // recentlyAttached = false;
-    // if (uidl.hasAttribute(WRAPPER_AUTOREINIT_ON_REATTACH)
-    // && uidl.getBooleanAttribute(WRAPPER_AUTOREINIT_ON_REATTACH)) {
-    // client.updateVariable(wrappersPaintableId, WIDGET_VISIBLE_ID,
-    // false, true);
-    // return true;
-    // }
-    //
-    // }
-    // return false;
-    // }
-
-    // /**
-    // * Process the variable updates from the server and set the local
-    // variables.
-    // *
-    // * @param uidl
-    // * - the new UIDL instance
-    // */
-    // private void processVariableUpdatesFromServer(UIDL uidl) {
-    // proximity = uidl.getIntAttribute(WIDGET_LOAD_PROXIMITY);
-    // visibleDelay = uidl.getIntAttribute(WIDGET_LOAD_VISIBLE_DELAY);
-    // staticContainer = uidl.getBooleanAttribute(STATIC_CONTAINER);
-    // mode = uidl.getIntAttribute(WRAPPER_MODE);
-    //
-    // // Set the placeholder to size
-    // DOM.setStyleAttribute((com.google.gwt.user.client.Element) placeholder,
-    // "width", uidl.getStringAttribute(PLACEHOLDER_WIDTH));
-    // DOM.setStyleAttribute((com.google.gwt.user.client.Element) placeholder,
-    // "height", uidl.getStringAttribute(PLACEHOLDER_HEIGHT));
-    //
-    // }
-
-    // /**
-    // * Called when the master poller fires. This method tries to determine if
-    // * the widget is visible or not, if the wrapper has a defined delay
-    // * {@link #visibleDelay} that the placeholder should be visible before
-    // it's
-    // * defined as visible, this is where that delay is checked. <br>
-    // * <br>
-    // * If the placeholder is still visible after <i>delay</i> ms the client
-    // * either calls the server to request the lazy load component or calls
-    // * {@link #lateDrawChild()} to load the child (if in LAZY_LOAD_DRAW
-    // -mode).
-    // *
-    // * see {@link LazyLoadWrapper#MODE_LAZY_LOAD_DRAW} for more information
-    // * about the MODE_LAZY_LOAD_DRAW -mode.
-    // *
-    // */
-    // public void checkVisibility() {
-    //
-    // if (isVisibleInsideParent()) {
-    // visibilityPollingTimer.removeLLW(this);
-    //
-    // if (visibleDelay == 0) {
-    // widgetIsVible();
-    //
-    // } else {
-    // if (visibleDelayTimer == null) {
-    // createVisibleDelayTimer();
-    // }
-    //
-    // visibleDelayTimer.schedule(visibleDelay);
-    // }
-    //
-    // }
-    //
-    // }
-
+    /**
+     * Removes the placeholder from this LLW
+     */
     protected void removePlaceholder() {
         if (placeholder != null) {
             getElement().removeChild(placeholder);
@@ -179,6 +104,23 @@ public class VLazyLoadWrapper extends SimplePanel {
         if (placeholder != null) {
             placeholder.getStyle().setProperty("height", height);
             placeholder.getStyle().setProperty("width", width);
+        }
+    }
+
+    /**
+     * Draw the child component(s)
+     */
+    public void lateDrawChild(List<ComponentConnector> children) {
+
+        VConsole.error("LLW Drawing child...");
+
+        // Remove the placeholder
+        removePlaceholder();
+
+        getElement().setClassName(CLASSNAME);
+
+        for (ComponentConnector childConnector : children) {
+            add(childConnector.getWidget());
         }
     }
 
@@ -200,32 +142,15 @@ public class VLazyLoadWrapper extends SimplePanel {
 
             // Check if parent is not scrollable or has overflow visible..
             if (!parent.getClassName().contains("v-scrollable")) {
-                // if
-                // (!(parent.getStyle().getOverflow().equalsIgnoreCase("auto")
-                // || !parent
-                // .getClassName().contains("v-scrollable"))) {
                 tempElement = parent;
                 continue;
             }
-
-            // int childOffsetTop = childElement.getOffsetTop();
-            // int parentHeight = parent.getClientHeight();
-            // int parentScroll = parent.getScrollTop();
-
-            // VConsole.error("Child is " + childElement.getClassName());
-            // VConsole.error("Child offset top: " + childOffsetTop
-            // + " parent height: " + parentHeight + " parent scroll: "
-            // + parentScroll + " parent bottom: "
-            // + (parentHeight + parentScroll));
 
             /* Vertical */
             /*
              * Check that the child is inside the vert. view area of the parent
              * if not, return visibility as false
              */
-            // NEG: child top < parent view area bottom && child bottom > parent
-            // view area top
-
             int childTopPosY = childElement.getOffsetTop() - proximity;
             int childBottomPosY = childElement.getOffsetTop()
                     + childElement.getOffsetHeight() + proximity;
@@ -234,36 +159,14 @@ public class VLazyLoadWrapper extends SimplePanel {
             int parentVisibleBottom = parentVisibleTop
                     + parent.getClientHeight();
 
-            // VConsole.error("Child top pos: " + childTopPosY +
-            // " Child bottom: "
-            // + childBottomPosY);
-            // VConsole.error("Parent visible top: " + parentVisibleTop
-            // + " parent visible bottom: " + parentVisibleBottom);
-
-            // if (!(childTopPosY < parent.getClientHeight()
-            // + parent.getScrollTop())
-            // && (childBottomPosY > parent.getScrollTop())) {
-            //
-            // return false;
-            // }
-
             if (checkVerticalVisibility(childTopPosY, childBottomPosY,
                     parentVisibleTop, parentVisibleBottom) == false) {
                 // Child is not visible vertically at all...
                 return false;
             }
 
-            //
-            // if (childTopPosY < parent.getClientHeight() +
-            // parent.getScrollTop()) {
-            // VConsole.error("Child visible in bottom... childTopY: "
-            // + childTopPosY + " parent bottom: "
-            // + (parent.getClientHeight() + parent.getScrollTop()));
-            // } else {
-            // VConsole.error("Child visible in top; ");
-            // }
-
             // TODO refactor X-check to method for testability!
+
             /* Horizontal */
             /*
              * Check that the child is inside the horiz. view area of the parent
@@ -292,10 +195,6 @@ public class VLazyLoadWrapper extends SimplePanel {
      * 
      * Checks if the child is visible vertically inside the parent.
      * 
-     * @param childTopY
-     * @param childBottomY
-     * @param parentTopY
-     * @param parentBottomY
      * @return true if visible, false otherwise
      */
     protected boolean checkVerticalVisibility(int childTopY, int childBottomY,
@@ -318,96 +217,5 @@ public class VLazyLoadWrapper extends SimplePanel {
 
         return false;
     }
-
-    /**
-     * When we are using the "MODE_LAZY_LOAD_DRAW" (all children already on
-     * client side) this is where the child component is actually painted.
-     */
-    protected void lateDrawChild() {
-
-        VConsole.error("LLW Drawing child...");
-        // Remove the placeholder
-        removePlaceholder();
-
-        getElement().setClassName(CLASSNAME);
-
-        // client.getPaintable(childUIDL).updateFromUIDL(childUIDL, client);
-        //
-        // // Tell the parent container that our size has updated
-        // Set<Paintable> pa = new HashSet<Paintable>();
-        // pa.add(this);
-        // Util.getLayout(this).requestLayout(pa);
-    }
-
-    // /*
-    // * Container methods
-    // */
-    // public RenderSpace getAllocatedSpace(Widget child) {
-    //
-    // // if (staticContainer) {
-    // return new RenderSpace(getOffsetWidth(), getOffsetHeight());
-    // // }
-    // // } else {
-    // //
-    // // RenderSpace llwRS = Util.getLayout(this).getAllocatedSpace(this);
-    // // RenderSpace rs = new RenderSpace(llwRS.getWidth(),
-    // // llwRS.getHeight());
-    // //
-    // // return rs;
-    // //
-    // // }
-    //
-    // }
-
-    public boolean hasChildComponent(Widget component) {
-
-        if (getWidget() == component) {
-            return true;
-        }
-
-        return false;
-
-    }
-
-    public void replaceChildComponent(Widget oldComponent, Widget newComponent) {
-        setWidget(newComponent);
-    }
-
-    public boolean requestLayout(Set<Paintable> children) {
-        if (staticContainer) {
-            return true;
-        }
-
-        if (getElement().getStyle().getHeight().equalsIgnoreCase("")
-                || getElement().getStyle().getWidth().equalsIgnoreCase("")) {
-            return false;
-        }
-
-        return true;
-    }
-
-    public void lateDrawChild(List<ComponentConnector> children) {
-        lateDrawChild();
-        for (ComponentConnector childConnector : children) {
-            add(childConnector.getWidget());
-        }
-
-    }
-
-    // public void updateCaption(Paintable component, UIDL uidl) {
-    // if (VCaption.isNeeded(uidl)) {
-    // if (captionWrapper != null) {
-    // captionWrapper.updateCaption(uidl);
-    // } else {
-    // captionWrapper = new VCaptionWrapper(component, client);
-    // setWidget(captionWrapper);
-    // captionWrapper.updateCaption(uidl);
-    // }
-    // } else {
-    // if (captionWrapper != null) {
-    // setWidget((Widget) lazyLoadPaintableComponent);
-    // }
-    // }
-    // }
 
 }

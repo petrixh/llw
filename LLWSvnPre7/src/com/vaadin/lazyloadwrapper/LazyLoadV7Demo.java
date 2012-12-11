@@ -3,6 +3,7 @@ package com.vaadin.lazyloadwrapper;
 import com.vaadin.data.util.IndexedContainer;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.AbstractComponentContainer;
+import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
@@ -74,7 +75,7 @@ public class LazyLoadV7Demo {
         return vl;
     }
 
-    public Panel photoShowDemo() {
+    public Component photoShowDemo() {
         VerticalLayout layout = new VerticalLayout();
         layout.setMargin(true);
         layout.setSpacing(true);
@@ -93,16 +94,18 @@ public class LazyLoadV7Demo {
             LazyLoadWrapper llw = new LazyLoadWrapper(e, "1152px", "864px");
             llw.setProximity(250);
             llw.setPlaceholderVisibleDelay(5000);
+            llw.setMode(LazyLoadWrapper.MODE_LAZY_LOAD_DRAW);
             layout.addComponent(llw);
+
         }
 
         Label l = new Label("Spacer...");
         l.setHeight("1000px");
         layout.addComponent(l);
 
-        Panel p = new Panel(layout);
-        p.setHeight("400px");
+        // TabSheet p = new TabSheet(layout, new Label("Foo"));
+        // p.setHeight("400px");
 
-        return p;
+        return layout;
     }
 }

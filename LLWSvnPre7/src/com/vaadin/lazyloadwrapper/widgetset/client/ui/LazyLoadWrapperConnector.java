@@ -3,10 +3,8 @@ package com.vaadin.lazyloadwrapper.widgetset.client.ui;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.ComponentConnector;
 import com.vaadin.client.ConnectorHierarchyChangeEvent;
-import com.vaadin.client.UIDL;
 import com.vaadin.client.VConsole;
 import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
@@ -90,18 +88,6 @@ public class LazyLoadWrapperConnector extends
 
     }
 
-    /*
-     * LEGACY STUFF...
-     */
-
-    private void legacyUpdateFromUIDL() {
-        if (wrappersPaintableId == null) {
-            wrappersPaintableId = getConnectorId();
-        }
-
-        updateToThisLLW();
-    }
-
     /**
      * Process the update from the server.
      * 
@@ -149,70 +135,23 @@ public class LazyLoadWrapperConnector extends
     }
 
     /**
-     * Draw the child from UIDL
-     * 
-     * @param uidl
-     * @param client
-     */
-    private void drawChildFromUIDL(UIDL uidl, ApplicationConnection client) {
-
-        // // Remove the placeholder
-        // getWidget().getElement().removeChild(placeholder);
-        // placeholder = null;
-        //
-        // // remove the spinner and decos...
-        // this.setStyleName(CLASSNAME);
-        //
-        // /* First child must first be attached to DOM, then updated */
-        // UIDL childUIDL = uidl.getChildUIDL(0);
-        // Paintable p = client.getPaintable(uidl.getChildUIDL(0));
-        // add((Widget) p);
-
-        // Tell the child to update itself from UIDL
-        // p.updateFromUIDL(childUIDL, client);
-
-    }
-
-    /**
-     * Saves the child UIDL and adds the child to this widget but does not
-     * render it.
-     * 
-     * @param uidl
-     *            - the UIDL for the LLW
-     * @param client
-     *            - the ApplicationConnection instance
-     */
-    private void initializeLazyLoadDrawMode(UIDL uidl,
-            ApplicationConnection client) {
-
-        // childUIDL = uidl.getChildUIDL(0);
-        //
-        // /*
-        // * Add child to widget but don't render it before it's visible.
-        // */
-        // Paintable p = client.getPaintable(childUIDL);
-        // add((Widget) p);
-
-    }
-
-    /**
      * Called when we have determined that the wrapper is visible
      */
     private void widgetIsVible() {
         VConsole.log("In WIDGETISVISIBLE");
 
         if (!getWidget().isAttached()) {
+
             VConsole.log("The wrapper with PID: "
-                    + wrappersPaintableId
+                    + getConnectorId()
                     + " is no longer attached to the DOM, ignoring paint of child component... ");
             return;
         }
 
         if (getState().mode == MODE_LAZY_LOAD_DRAW) {
             getWidget().lateDrawChild(getChildComponents());
-        }
-
-        else {
+        } else {
+            // Inform the server that the component is visible...
             rpc.onWidgetVisible();
         }
     }
@@ -234,9 +173,7 @@ public class LazyLoadWrapperConnector extends
 
                 visibleDelayTimer.schedule(getState().placeholderVisibleDelay);
             }
-
         }
-
     }
 
     /**
