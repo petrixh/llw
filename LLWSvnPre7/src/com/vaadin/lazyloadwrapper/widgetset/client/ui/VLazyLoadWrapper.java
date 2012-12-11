@@ -193,16 +193,30 @@ public class VLazyLoadWrapper extends SimplePanel {
      */
     protected boolean isVisibleInsideParent() {
 
+        Element tempElement = getElement();
         Element childElement = getElement();
         Element parent;
-        while ((parent = childElement.getOffsetParent()) != null) {
+        while ((parent = tempElement.getOffsetParent()) != null) {
 
             // Check if parent is not scrollable or has overflow visible..
-            if (parent.getStyle().getOverflow().equalsIgnoreCase("visible")
-                    || parent.getStyle().getOverflow().equalsIgnoreCase("")) {
-                childElement = parent;
+            if (!parent.getClassName().contains("v-scrollable")) {
+                // if
+                // (!(parent.getStyle().getOverflow().equalsIgnoreCase("auto")
+                // || !parent
+                // .getClassName().contains("v-scrollable"))) {
+                tempElement = parent;
                 continue;
             }
+
+            // int childOffsetTop = childElement.getOffsetTop();
+            // int parentHeight = parent.getClientHeight();
+            // int parentScroll = parent.getScrollTop();
+
+            // VConsole.error("Child is " + childElement.getClassName());
+            // VConsole.error("Child offset top: " + childOffsetTop
+            // + " parent height: " + parentHeight + " parent scroll: "
+            // + parentScroll + " parent bottom: "
+            // + (parentHeight + parentScroll));
 
             /* Vertical */
             /*
@@ -211,14 +225,45 @@ public class VLazyLoadWrapper extends SimplePanel {
              */
             // NEG: child top < parent view area bottom && child bottom > parent
             // view area top
-            if (!(childElement.getOffsetTop() - proximity < parent
-                    .getClientHeight() + parent.getScrollTop())
-                    && (childElement.getOffsetTop()
-                            + childElement.getOffsetHeight() + proximity > parent
-                                .getScrollTop())) {
+
+            int childTopPosY = childElement.getOffsetTop() - proximity;
+            int childBottomPosY = childElement.getOffsetTop()
+                    + childElement.getOffsetHeight() + proximity;
+
+            int parentVisibleTop = parent.getScrollTop();
+            int parentVisibleBottom = parentVisibleTop
+                    + parent.getClientHeight();
+
+            // VConsole.error("Child top pos: " + childTopPosY +
+            // " Child bottom: "
+            // + childBottomPosY);
+            // VConsole.error("Parent visible top: " + parentVisibleTop
+            // + " parent visible bottom: " + parentVisibleBottom);
+
+            // if (!(childTopPosY < parent.getClientHeight()
+            // + parent.getScrollTop())
+            // && (childBottomPosY > parent.getScrollTop())) {
+            //
+            // return false;
+            // }
+
+            if (checkVerticalVisibility(childTopPosY, childBottomPosY,
+                    parentVisibleTop, parentVisibleBottom) == false) {
+                // Child is not visible vertically at all...
                 return false;
             }
 
+            //
+            // if (childTopPosY < parent.getClientHeight() +
+            // parent.getScrollTop()) {
+            // VConsole.error("Child visible in bottom... childTopY: "
+            // + childTopPosY + " parent bottom: "
+            // + (parent.getClientHeight() + parent.getScrollTop()));
+            // } else {
+            // VConsole.error("Child visible in top; ");
+            // }
+
+            // TODO refactor X-check to method for testability!
             /* Horizontal */
             /*
              * Check that the child is inside the horiz. view area of the parent
@@ -234,10 +279,44 @@ public class VLazyLoadWrapper extends SimplePanel {
             }
 
             childElement = parent;
+            tempElement = parent;
         }
 
         return true;
 
+    }
+
+    /**
+     * 
+     * TODO WRITE UNIT TESTS FOR THIS... It keeps breaking!
+     * 
+     * Checks if the child is visible vertically inside the parent.
+     * 
+     * @param childTopY
+     * @param childBottomY
+     * @param parentTopY
+     * @param parentBottomY
+     * @return true if visible, false otherwise
+     */
+    protected boolean checkVerticalVisibility(int childTopY, int childBottomY,
+            int parentTopY, int parentBottomY) {
+        if (childTopY < parentTopY && childBottomY > parentBottomY) {
+            // Child is larger than parent visible area, but is currently
+            // visible in parent.
+            return true;
+        }
+
+        boolean childTopVisible = childTopY >= parentTopY
+                && childTopY <= parentBottomY;
+
+        boolean childBottomVisible = childBottomY <= parentBottomY
+                && childBottomY >= parentTopY;
+
+        if (childTopVisible || childBottomVisible) {
+            return true;
+        }
+
+        return false;
     }
 
     /**

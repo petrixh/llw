@@ -17,6 +17,8 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
     @Override
     protected void init(VaadinRequest request) {
         VerticalLayout vl = new VerticalLayout();
+        vl.setMargin(true);
+        vl.setSpacing(false);
         setContent(vl);
 
         // vl.addComponent(new Label("Hello!"));
@@ -46,8 +48,10 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
         // LazyLoadWrapperDemo llwDemo = new LazyLoadWrapperDemo();
         // vl.addComponent(llwDemo.createDemo().getContent());
         //
+        // vl.addComponent(new LazyLoadV7Demo().createTableDemo());
         // vl.addComponent(new LazyLoadV7Demo().crateLabelsDemo());
-        vl.addComponent(new LazyLoadV7Demo().createTableDemo());
+
+        vl.addComponent(new LazyLoadV7Demo().photoShowDemo());
 
     }
 

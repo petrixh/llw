@@ -511,8 +511,6 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
         if (lazyloadComponent.getWidthUnits() != Unit.PERCENTAGE
                 && lazyloadComponent.getWidth() != -1.0) {
-            // getState().placeholderWidth = lazyloadComponent.getWidth()
-            // + Sizeable.UNIT_SYMBOLS[lazyloadComponent.getWidthUnits()];
 
             getState().placeholderWidth = lazyloadComponent.getWidth()
                     + lazyloadComponent.getWidthUnits().getSymbol();

@@ -1,7 +1,9 @@
 package com.vaadin.lazyloadwrapper;
 
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.AbstractComponentContainer;
+import com.vaadin.ui.Embedded;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.Table;
@@ -26,9 +28,11 @@ public class LazyLoadV7Demo {
                 0, 10000000));
 
         Label undefSizeLabel = new Label("Label with unef size");
+        undefSizeLabel.setSizeUndefined();
         labelsWithDifferentSizes.addComponent(undefSizeLabel);
 
         Label undefSizeLabelLazy = new Label("Label with unef size");
+        undefSizeLabelLazy.setSizeUndefined();
         labelsWithDifferentSizes.addComponent(new LazyLoadWrapper(
                 undefSizeLabelLazy, 0, 1000));
 
@@ -40,9 +44,9 @@ public class LazyLoadV7Demo {
         VerticalLayout vl = new VerticalLayout();
 
         Table t = new Table();
-        t.setWidth("100px");
+        t.setSizeFull();
+        // t.setWidth("100px");
         t.setHeight("200px");
-        // t.setPageLength(5);
 
         IndexedContainer ic = new IndexedContainer();
         ic.addContainerProperty("Name", String.class, null);
@@ -62,13 +66,43 @@ public class LazyLoadV7Demo {
         panelLayout.addComponent(t);
 
         LazyLoadWrapper tableLLW = new LazyLoadWrapper(t, 0, 1000);
-        // tableLLW.setHeight("200px");
-        // tableLLW.setWidth("200px");
-
+        tableLLW.setPlaceHolderSize("200px", "100px");
         // tableLLW.setStaticConatiner(true);
         vl.addComponent(tableLLW);
         // vl.addComponent(t);
 
         return vl;
+    }
+
+    public Panel photoShowDemo() {
+        VerticalLayout layout = new VerticalLayout();
+        layout.setMargin(true);
+        layout.setSpacing(true);
+
+        for (int i = 39; i < 41; i++) {
+            Embedded e = new Embedded(
+                    null,
+                    new ExternalResource(
+                            "http://www.freeimageslive.com/galleries/nature/sky/pics/nature00539.jpg"));
+
+            if (i == 39) {
+                layout.addComponent(e);
+                e.setHeight("864px");
+                continue;
+            }
+            LazyLoadWrapper llw = new LazyLoadWrapper(e, "1152px", "864px");
+            llw.setProximity(250);
+            llw.setPlaceholderVisibleDelay(5000);
+            layout.addComponent(llw);
+        }
+
+        Label l = new Label("Spacer...");
+        l.setHeight("1000px");
+        layout.addComponent(l);
+
+        Panel p = new Panel(layout);
+        p.setHeight("400px");
+
+        return p;
     }
 }
