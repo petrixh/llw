@@ -55,6 +55,10 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
 
     }
 
+    public void createFeaturesList() {
+
+    }
+
     // /**
     // * Examples on how to use the lazy load wrapper
     // */
