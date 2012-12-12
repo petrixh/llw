@@ -7,12 +7,14 @@ import com.vaadin.annotations.Widgetset;
 import com.vaadin.data.fieldgroup.FieldGroup;
 import com.vaadin.data.fieldgroup.FieldGroup.CommitException;
 import com.vaadin.data.util.BeanItem;
+import com.vaadin.data.util.HierarchicalContainer;
 import com.vaadin.data.util.converter.Converter;
 import com.vaadin.event.ItemClickEvent;
 import com.vaadin.event.ItemClickEvent.ItemClickListener;
 import com.vaadin.lazyloadwrapper.LazyLoadWrapper;
 import com.vaadin.navigator.Navigator;
 import com.vaadin.server.VaadinRequest;
+import com.vaadin.shared.ui.label.ContentMode;
 import com.vaadin.ui.AbstractOrderedLayout;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
@@ -131,18 +133,36 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
         Tree tree = new Tree();
         tree.setImmediate(true);
 
+        String parentVersion = "1.0 alpha";
+
+        HierarchicalContainer container = new HierarchicalContainer();
+        container.addContainerProperty("caption", String.class, null);
+        container.addItem(parentVersion);
+        container.setChildrenAllowed(parentVersion, true);
+
+        tree.setContainerDataSource(container);
+
         for (VIEWS view : VIEWS.values()) {
-            tree.addItem(view);
+            container.addItem(view);
+            container.setChildrenAllowed(view, false);
             tree.setItemCaption(view, view.getName());
+            container.setParent(view, parentVersion);
+
         }
 
         tree.addItemClickListener(new ItemClickListener() {
 
             @Override
             public void itemClick(ItemClickEvent event) {
-                navigateTo((VIEWS) event.getItemId());
+                if (event.getItemId() instanceof VIEWS) {
+                    navigateTo((VIEWS) event.getItemId());
+                }
             }
         });
+
+        for (Object id : tree.rootItemIds()) {
+            tree.expandItemsRecursively(id);
+        }
 
         return tree;
     }
@@ -289,6 +309,9 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
                 heavinessFactor.addItem(i);
             }
             layout.addComponent(heavinessFactor);
+
+            Label spacer = new Label("<hr/>", ContentMode.HTML);
+            layout.addComponent(spacer);
 
             setCaption("LLW Features");
 

@@ -82,9 +82,15 @@ public class VLazyLoadWrapper extends SimplePanel {
     public VLazyLoadWrapper() {
         super();
 
+        createPlaceholder();
+    }
+
+    private void createPlaceholder() {
         /* Set the style name (spinner) to the placeholder */
         setStylePrimaryName(LOADING_CLASSNAME);
-        placeholder = DOM.createDiv();
+        if (placeholder == null) {
+            placeholder = DOM.createDiv();
+        }
         getElement().appendChild(placeholder);
     }
 
@@ -94,7 +100,7 @@ public class VLazyLoadWrapper extends SimplePanel {
     protected void removePlaceholder() {
         if (placeholder != null) {
             getElement().removeChild(placeholder);
-            placeholder = null;
+            // placeholder = null;
         }
     }
 
@@ -222,6 +228,13 @@ public class VLazyLoadWrapper extends SimplePanel {
 
     public void setProximity(int proximity) {
         this.proximity = proximity;
+    }
+
+    public void ensurePlaceholderVisible() {
+        if (placeholder.getParentElement() == null) {
+            createPlaceholder();
+        }
+
     }
 
 }

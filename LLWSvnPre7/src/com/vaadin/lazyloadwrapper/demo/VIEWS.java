@@ -2,11 +2,13 @@ package com.vaadin.lazyloadwrapper.demo;
 
 import com.vaadin.lazyloadwrapper.demo.views.InformationView;
 import com.vaadin.lazyloadwrapper.demo.views.PhotoArchive;
+import com.vaadin.lazyloadwrapper.demo.views.ServerSideForceVisible;
 
 public enum VIEWS {
 
     INFO("Home", InformationView.class), PHOTO_ARCHIVE("Photo archive",
-            PhotoArchive.class);
+            PhotoArchive.class), SS_SHOW_COMPONENT("Server-side visible",
+            ServerSideForceVisible.class);
 
     private String name;
     private Class<? extends ViewBase> clazz;

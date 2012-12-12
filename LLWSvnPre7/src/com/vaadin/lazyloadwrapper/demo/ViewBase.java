@@ -13,7 +13,6 @@ public abstract class ViewBase extends CustomComponent implements View {
     @Override
     public void enter(ViewChangeEvent event) {
         String parameters = event.getParameters();
-        System.out.println("Parameters:  ");
         demoParams = new DemoParams();
         demoParams.parseFromParams(parameters);
 

@@ -71,19 +71,12 @@ public class LazyLoadWrapperConnector extends
     public void onStateChanged(StateChangeEvent stateChangeEvent) {
         super.onStateChanged(stateChangeEvent);
 
-        LLWState state2 = getState();
-
-        VConsole.log("New state for LLW");
-        VConsole.log("Mode: " + state2.mode);
-        VConsole.log("Placeholder visible delay: "
-                + state2.placeholderVisibleDelay);
-
         getWidget().setPlaceHolderSize(getState().placeholderHeight,
                 getState().placeholderWidth);
 
-        if (state2.staticContainer) {
-            getWidget().setHeight(state2.placeholderHeight);
-            getWidget().setWidth(state2.placeholderWidth);
+        if (getState().staticContainer) {
+            getWidget().setHeight(getState().placeholderHeight);
+            getWidget().setWidth(getState().placeholderWidth);
         }
 
     }
@@ -111,7 +104,7 @@ public class LazyLoadWrapperConnector extends
          * If UIDL has child we should paint it inside the placeholder or
          * configure for MODE_LAZY_LOAD_DRAW
          */
-        if (getChildren().size() > 0 && getWidget().isAttached()) {
+        if (getWidget().isAttached()) {
 
             // if (mode == MODE_LAZY_LOAD_DRAW) {
             // initializeLazyLoadDrawMode(uidl, client);
@@ -127,8 +120,11 @@ public class LazyLoadWrapperConnector extends
             // }
             // }
 
-            if (getState().mode != MODE_LAZY_LOAD_DRAW) {
+            // if (getState().mode != MODE_LAZY_LOAD_DRAW) {
+            if (getState().clientSideIsVisible && getChildren().size() > 0) {
                 getWidget().lateDrawChild(getChildComponents());
+            } else {
+                getWidget().ensurePlaceholderVisible();
             }
         }
 
