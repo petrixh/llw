@@ -13,7 +13,7 @@
         <init-param>
             <description>Vaadin UI</description>
             <param-name>UI</param-name>
-			<param-value>com.vaadin.lazyloadwrapper.LazyLoadWrapperApplication</param-value>
+			<param-value>com.vaadin.lazyloadwrapper.demo.LazyLoadWrapperApplication</param-value>
 		</init-param>
 		<init-param>
 			<description>

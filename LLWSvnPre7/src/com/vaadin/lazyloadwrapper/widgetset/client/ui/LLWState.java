@@ -1,6 +1,7 @@
 package com.vaadin.lazyloadwrapper.widgetset.client.ui;
 
 import com.vaadin.shared.AbstractComponentState;
+import com.vaadin.shared.annotations.DelegateToWidget;
 
 public class LLWState extends AbstractComponentState {
 
@@ -18,6 +19,7 @@ public class LLWState extends AbstractComponentState {
      * it's actually visible and negative value means that the component should
      * be <i>X</i> px visible before it's drawn.
      */
+    @DelegateToWidget
     public int proximity = 250;
 
     /**

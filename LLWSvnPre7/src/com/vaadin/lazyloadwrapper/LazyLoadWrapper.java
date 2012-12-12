@@ -87,7 +87,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
         @Override
         public void onWidgetVisible() {
 
-            System.out.println("Server-side go widget visible call");
+            // System.out.println("Server-side go widget visible call");
             setClientSideIsVisible(true);
 
         }
@@ -767,7 +767,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     // replaced by get iterator
     @Override
     public Iterator<Component> getComponentIterator() {
-        System.out.println("Iterating thrhough components on server");
+        // System.out.println("Iterating thrhough components on server");
         Iterator<Component> iterator = new Iterator<Component>() {
 
             private boolean first = lazyloadComponent == null;
@@ -779,11 +779,11 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
             public Component next() {
                 if (!first) {
-                    System.out.println("Returning lazy load component");
+                    // System.out.println("Returning lazy load component");
                     first = true;
                     return lazyloadComponent;
                 } else {
-                    System.out.println("Retruning null component");
+                    // System.out.println("Retruning null component");
                     return null;
                 }
             }
@@ -856,12 +856,12 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
     @Override
     public boolean isRendered(Component childComponent) {
-        System.out.println("Using selective renderer");
+        // System.out.println("Using selective renderer");
         if (getState().clientSideIsVisible) {
             return true;
         }
 
-        System.out.println("Selectiver renderer returning false");
+        // System.out.println("Selectiver renderer returning false");
         return false;
     }
 }

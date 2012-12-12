@@ -49,9 +49,7 @@ public class VLazyLoadWrapper extends SimplePanel {
     protected ApplicationConnection client;
 
     private int proximity = 0;
-    private int visibleDelay = 0;
 
-    // private Paintable lazyLoadPaintableComponent;
     private VCaptionWrapper captionWrapper;
     private UIDL childUIDL;
 
@@ -216,6 +214,14 @@ public class VLazyLoadWrapper extends SimplePanel {
         }
 
         return false;
+    }
+
+    public int getProximity() {
+        return proximity;
+    }
+
+    public void setProximity(int proximity) {
+        this.proximity = proximity;
     }
 
 }
