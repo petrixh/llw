@@ -21,6 +21,7 @@ import com.vaadin.ui.Button.ClickEvent;
 import com.vaadin.ui.Button.ClickListener;
 import com.vaadin.ui.CheckBox;
 import com.vaadin.ui.Component;
+import com.vaadin.ui.HorizontalLayout;
 import com.vaadin.ui.HorizontalSplitPanel;
 import com.vaadin.ui.Label;
 import com.vaadin.ui.NativeSelect;
@@ -32,6 +33,7 @@ import com.vaadin.ui.Tree;
 import com.vaadin.ui.UI;
 import com.vaadin.ui.VerticalLayout;
 import com.vaadin.ui.Window;
+import com.vaadin.ui.themes.Reindeer;
 
 @Widgetset("com.vaadin.lazyloadwrapper.widgetset.LazyLoadWrapperWidgetset")
 public class LazyLoadWrapperApplication extends UI implements Serializable {
@@ -43,6 +45,7 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
     private HorizontalSplitPanel splitPanel;
     private LLWFetaureForm llwFeatures;
     private FieldGroup fieldGroup;
+    private Tree featureTree;
 
     @Override
     protected void init(VaadinRequest request) {
@@ -55,7 +58,14 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
         setSizeFull();
         splitPanel.setSizeFull();
 
-        createFeaturesList();
+        String fragment = getPage().getUriFragment();
+        System.out.println("Fragment: " + fragment);
+        if (fragment != null && fragment.contains("!")
+                && fragment.contains("/")) {
+            fragment = fragment.substring(fragment.indexOf("/"));
+        }
+
+        createFeaturesList(fragment);
 
         contentLayout = new VerticalLayout();
         contentLayout.setMargin(true);
@@ -106,7 +116,7 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
 
     }
 
-    public void createFeaturesList() {
+    public DemoParams createFeaturesList(String params) {
         VerticalLayout selectorLayout = new VerticalLayout();
         selectorLayout.setSpacing(true);
         selectorLayout.setMargin(true);
@@ -114,7 +124,9 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
 
         llwFeatures = new LLWFetaureForm();
 
-        fieldGroup = new FieldGroup(new BeanItem<DemoParams>(new DemoParams()));
+        DemoParams bean = new DemoParams();
+        bean.parseFromParams(params);
+        fieldGroup = new FieldGroup(new BeanItem<DemoParams>(bean));
         fieldGroup.bindMemberFields(llwFeatures);
 
         llwFeatures.addNavigationClickListener(new Button.ClickListener() {
@@ -124,14 +136,31 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
                 navigateTo(navigator.getState().split("/")[0]);
             }
         });
+
+        llwFeatures.addResetClickListener(new Button.ClickListener() {
+
+            @Override
+            public void buttonClick(ClickEvent event) {
+
+                System.out.println("Resetting selections...");
+                createFeaturesList(null);
+            }
+        });
+
         selectorLayout.addComponent(llwFeatures);
 
         selectorLayout.addComponent(createFeatureTree());
+
+        return bean;
     }
 
     private Tree createFeatureTree() {
-        Tree tree = new Tree();
-        tree.setImmediate(true);
+        if (featureTree != null) {
+            return featureTree;
+        }
+
+        featureTree = new Tree();
+        featureTree.setImmediate(true);
 
         String parentVersion = "1.0 alpha";
 
@@ -140,17 +169,17 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
         container.addItem(parentVersion);
         container.setChildrenAllowed(parentVersion, true);
 
-        tree.setContainerDataSource(container);
+        featureTree.setContainerDataSource(container);
 
         for (VIEWS view : VIEWS.values()) {
             container.addItem(view);
             container.setChildrenAllowed(view, false);
-            tree.setItemCaption(view, view.getName());
+            featureTree.setItemCaption(view, view.getName());
             container.setParent(view, parentVersion);
 
         }
 
-        tree.addItemClickListener(new ItemClickListener() {
+        featureTree.addItemClickListener(new ItemClickListener() {
 
             @Override
             public void itemClick(ItemClickEvent event) {
@@ -160,11 +189,11 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
             }
         });
 
-        for (Object id : tree.rootItemIds()) {
-            tree.expandItemsRecursively(id);
+        for (Object id : featureTree.rootItemIds()) {
+            featureTree.expandItemsRecursively(id);
         }
 
-        return tree;
+        return featureTree;
     }
 
     public void navigateTo(VIEWS view) {
@@ -287,6 +316,7 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
         private Button refresh;
         private CheckBox usingWrappers;
         private NativeSelect heavinessFactor;
+        private Button reset;
 
         public LLWFetaureForm() {
 
@@ -301,7 +331,7 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
             usingWrappers = new CheckBox("Use wrappers");
             layout.addComponent(usingWrappers);
 
-            refresh = new Button("Refresh current view");
+            refresh = new Button("Refresh");
 
             heavinessFactor = new NativeSelect("Heaviness factor");
             heavinessFactor.setNullSelectionAllowed(false);
@@ -353,12 +383,25 @@ public class LazyLoadWrapperApplication extends UI implements Serializable {
             addComponent(placeholderWidth);
             addComponent(staticContainer);
 
-            addComponent(refresh);
+            HorizontalLayout hl = new HorizontalLayout();
+            hl.setSpacing(true);
+            hl.addComponent(refresh);
+
+            reset = new Button("Reset");
+            reset.addStyleName(Reindeer.BUTTON_LINK);
+
+            hl.addComponent(reset);
+
+            addComponent(hl);
 
         }
 
         public void addNavigationClickListener(ClickListener listener) {
             refresh.addClickListener(listener);
+        }
+
+        public void addResetClickListener(ClickListener listener) {
+            reset.addClickListener(listener);
         }
 
         protected void addComponent(Component component) {

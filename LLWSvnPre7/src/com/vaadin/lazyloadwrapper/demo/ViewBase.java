@@ -5,6 +5,7 @@ import com.vaadin.navigator.View;
 import com.vaadin.navigator.ViewChangeListener.ViewChangeEvent;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CustomComponent;
+import com.vaadin.ui.UI;
 
 public abstract class ViewBase extends CustomComponent implements View {
 
@@ -13,8 +14,10 @@ public abstract class ViewBase extends CustomComponent implements View {
     @Override
     public void enter(ViewChangeEvent event) {
         String parameters = event.getParameters();
-        demoParams = new DemoParams();
-        demoParams.parseFromParams(parameters);
+
+        LazyLoadWrapperApplication rootUI = (LazyLoadWrapperApplication) UI
+                .getCurrent();
+        demoParams = rootUI.createFeaturesList(parameters);
 
     }
 

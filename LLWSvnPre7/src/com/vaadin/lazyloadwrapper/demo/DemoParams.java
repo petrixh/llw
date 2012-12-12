@@ -30,6 +30,11 @@ public class DemoParams {
             }
         }
 
+        parseFromParams(params);
+    }
+
+    public void parseFromParams(HashMap<String, String> params) {
+
         Field[] declaredFields = getClass().getDeclaredFields();
 
         for (Field field : declaredFields) {
