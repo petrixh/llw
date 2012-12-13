@@ -79,7 +79,6 @@ public class LazyLoadWrapperConnector extends
             getWidget().setHeight(getState().placeholderHeight);
             getWidget().setWidth(getState().placeholderWidth);
         }
-
     }
 
     /**
