@@ -1,6 +1,7 @@
-package com.vaadin.lazyloadwrapper;
+package com.vaadin.lazyloadwrapper.olddemo;
 
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.lazyloadwrapper.LazyLoadWrapper;
 import com.vaadin.server.ExternalResource;
 import com.vaadin.ui.AbstractComponentContainer;
 import com.vaadin.ui.Component;

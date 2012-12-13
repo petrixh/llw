@@ -10,6 +10,7 @@ import com.vaadin.client.communication.RpcProxy;
 import com.vaadin.client.communication.StateChangeEvent;
 import com.vaadin.client.ui.AbstractComponentContainerConnector;
 import com.vaadin.lazyloadwrapper.LazyLoadWrapper;
+import com.vaadin.lazyloadwrapper.widgetset.client.ui.gwt.VLazyLoadWrapper;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(LazyLoadWrapper.class)
@@ -146,6 +147,8 @@ public class LazyLoadWrapperConnector extends
 
         if (getState().mode == MODE_LAZY_LOAD_DRAW) {
             getWidget().lateDrawChild(getChildComponents());
+            getLayoutManager().setNeedsMeasure(this);
+            getLayoutManager().layoutNow();
         } else {
             // Inform the server that the component is visible...
             rpc.onWidgetVisible();

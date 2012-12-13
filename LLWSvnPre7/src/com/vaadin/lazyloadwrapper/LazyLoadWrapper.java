@@ -528,6 +528,9 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
                     lazyloadComponent.getHeightUnits());
         }
 
+        if (getState().mode == MODE_LAZY_LOAD_DRAW) {
+            super.addComponent(lazyloadComponent);
+        }
     }
 
     /**
@@ -767,7 +770,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     // replaced by get iterator
     @Override
     public Iterator<Component> getComponentIterator() {
-        // System.out.println("Iterating thrhough components on server");
+        System.out.println("Iterating thrhough components on server");
         Iterator<Component> iterator = new Iterator<Component>() {
 
             private boolean first = lazyloadComponent == null;
@@ -779,11 +782,11 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
             public Component next() {
                 if (!first) {
-                    // System.out.println("Returning lazy load component");
+                    System.out.println("Returning lazy load component");
                     first = true;
                     return lazyloadComponent;
                 } else {
-                    // System.out.println("Retruning null component");
+                    System.out.println("Retruning null component");
                     return null;
                 }
             }
@@ -846,7 +849,8 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     @Override
     public Iterator<Component> iterator() {
 
-        if (getState().clientSideIsVisible) {
+        if (getState().clientSideIsVisible
+                || getState().mode == MODE_LAZY_LOAD_DRAW) {
             return getComponentIterator();
         } else {
             return new ArrayList().iterator();
@@ -856,12 +860,13 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
     @Override
     public boolean isRendered(Component childComponent) {
-        // System.out.println("Using selective renderer");
-        if (getState().clientSideIsVisible) {
+        System.out.println("Using selective renderer");
+        if (getState().clientSideIsVisible
+                || getState().mode == MODE_LAZY_LOAD_DRAW) {
             return true;
         }
 
-        // System.out.println("Selectiver renderer returning false");
+        System.out.println("Selectiver renderer returning false");
         return false;
     }
 }

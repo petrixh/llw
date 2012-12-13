@@ -1,4 +1,4 @@
-package com.vaadin.lazyloadwrapper.widgetset.client.ui;
+package com.vaadin.lazyloadwrapper.widgetset.client.ui.gwt;
 
 import java.util.List;
 
@@ -104,7 +104,7 @@ public class VLazyLoadWrapper extends SimplePanel {
         }
     }
 
-    protected void setPlaceHolderSize(String height, String width) {
+    public void setPlaceHolderSize(String height, String width) {
         if (placeholder != null) {
             placeholder.getStyle().setProperty("height", height);
             placeholder.getStyle().setProperty("width", width);
@@ -125,6 +125,8 @@ public class VLazyLoadWrapper extends SimplePanel {
 
         for (ComponentConnector childConnector : children) {
             add(childConnector.getWidget());
+            childConnector.getLayoutManager().setNeedsMeasure(childConnector);
+            childConnector.getLayoutManager().layoutNow();
         }
     }
 
@@ -137,7 +139,7 @@ public class VLazyLoadWrapper extends SimplePanel {
      * @return <b>true</b> = visible <br>
      *         <t/> <b>false</b> = obscured
      */
-    protected boolean isVisibleInsideParent() {
+    public boolean isVisibleInsideParent() {
 
         Element tempElement = getElement();
         Element childElement = getElement();

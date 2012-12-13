@@ -1,9 +1,10 @@
-package com.vaadin.lazyloadwrapper;
+package com.vaadin.lazyloadwrapper.olddemo;
 
 import java.util.ArrayList;
 
 import com.vaadin.data.Item;
 import com.vaadin.data.util.IndexedContainer;
+import com.vaadin.lazyloadwrapper.LazyLoadWrapper;
 import com.vaadin.server.ThemeResource;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.Embedded;

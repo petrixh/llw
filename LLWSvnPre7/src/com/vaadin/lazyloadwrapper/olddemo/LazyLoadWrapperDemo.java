@@ -1,8 +1,9 @@
-package com.vaadin.lazyloadwrapper;
+package com.vaadin.lazyloadwrapper.olddemo;
 
 import java.io.Serializable;
 
 import com.vaadin.data.Property.ValueChangeListener;
+import com.vaadin.lazyloadwrapper.LazyLoadWrapper;
 import com.vaadin.ui.Alignment;
 import com.vaadin.ui.Button;
 import com.vaadin.ui.Button.ClickEvent;
