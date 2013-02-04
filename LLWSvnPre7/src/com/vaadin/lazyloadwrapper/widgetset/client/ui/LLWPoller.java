@@ -36,7 +36,7 @@ public class LLWPoller extends Timer {
 
         listeners.add(llw);
         if (listeners.size() == 1) {
-            scheduleRepeating(250);
+            scheduleRepeating(1250);
         }
     }
 

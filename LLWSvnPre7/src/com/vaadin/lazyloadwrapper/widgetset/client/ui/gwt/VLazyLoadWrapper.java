@@ -1,15 +1,10 @@
 package com.vaadin.lazyloadwrapper.widgetset.client.ui.gwt;
 
-import java.util.List;
-
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
-import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ApplicationConnection;
-import com.vaadin.client.ComponentConnector;
-import com.vaadin.client.UIDL;
-import com.vaadin.client.VCaptionWrapper;
 import com.vaadin.client.VConsole;
 
 /**
@@ -50,15 +45,6 @@ public class VLazyLoadWrapper extends SimplePanel {
 
     private int proximity = 0;
 
-    private VCaptionWrapper captionWrapper;
-    private UIDL childUIDL;
-
-    private int mode = 0;
-    private boolean staticContainer = false;
-
-    /** Timer used when visible delay is defined */
-    private Timer visibleDelayTimer = null;
-
     private Element placeholder = null;
     private boolean recentlyAttached = false;
 
@@ -81,10 +67,12 @@ public class VLazyLoadWrapper extends SimplePanel {
      */
     public VLazyLoadWrapper() {
         super();
-
         createPlaceholder();
     }
 
+    /**
+     * Creates (if needed) and attaches the placeholder to the wrapper.
+     */
     private void createPlaceholder() {
         /* Set the style name (spinner) to the placeholder */
         setStylePrimaryName(LOADING_CLASSNAME);
@@ -98,9 +86,19 @@ public class VLazyLoadWrapper extends SimplePanel {
      * Removes the placeholder from this LLW
      */
     protected void removePlaceholder() {
-        if (placeholder != null) {
+        if (placeholder != null && placeholder.getParentElement() != null
+                && placeholder.getParentElement().equals(getElement())) {
             getElement().removeChild(placeholder);
-            // placeholder = null;
+        }
+    }
+
+    /**
+     * Checks if the placeholder is attached, if not will attach the
+     * placeholder.
+     */
+    public void ensurePlaceholderVisible() {
+        if (placeholder != null && placeholder.getParentElement() == null) {
+            createPlaceholder();
         }
     }
 
@@ -114,20 +112,18 @@ public class VLazyLoadWrapper extends SimplePanel {
     /**
      * Draw the child component(s)
      */
-    public void lateDrawChild(List<ComponentConnector> children) {
+    public void lateDrawChild(Widget child) {
 
-        VConsole.error("LLW Drawing child...");
+        VConsole.log("LLW Drawing child...");
+        getElement().setClassName(CLASSNAME);
 
         // Remove the placeholder
         removePlaceholder();
-
-        getElement().setClassName(CLASSNAME);
-
-        for (ComponentConnector childConnector : children) {
-            add(childConnector.getWidget());
-            childConnector.getLayoutManager().setNeedsMeasure(childConnector);
-            childConnector.getLayoutManager().layoutNow();
+        if (getWidget() != null) {
+            remove(getWidget());
         }
+
+        add(child);
     }
 
     /**
@@ -141,37 +137,43 @@ public class VLazyLoadWrapper extends SimplePanel {
      */
     public boolean isVisibleInsideParent() {
 
-        Element tempElement = getElement();
         Element childElement = getElement();
+        Element child2 = getElement();
         Element parent;
-        while ((parent = tempElement.getOffsetParent()) != null) {
+        while ((parent = child2.getOffsetParent()) != null) {
 
             // Check if parent is not scrollable or has overflow visible..
             if (!parent.getClassName().contains("v-scrollable")) {
-                tempElement = parent;
+                child2 = parent;
                 continue;
             }
+            // if (parent.getStyle().getOverflow().equalsIgnoreCase("visible")
+            // || parent.getStyle().getOverflow().equalsIgnoreCase("")) {
+            // childElement = parent;
+            // continue;
+            // }
 
             /* Vertical */
             /*
              * Check that the child is inside the vert. view area of the parent
              * if not, return visibility as false
              */
-            int childTopPosY = childElement.getOffsetTop() - proximity;
-            int childBottomPosY = childElement.getOffsetTop()
-                    + childElement.getOffsetHeight() + proximity;
+            // NEG: child top < parent view area bottom && child bottom > parent
+            // view area top
+            int childOffsetTop = childElement.getOffsetTop();
+            int parentHeight = parent.getClientHeight() + parent.getScrollTop();
 
-            int parentVisibleTop = parent.getScrollTop();
-            int parentVisibleBottom = parentVisibleTop
-                    + parent.getClientHeight();
+            int childOffsetBottom = childElement.getOffsetTop()
+                    + childElement.getOffsetHeight();
+            int parentBottom = parent.getScrollTop();
 
-            if (checkVerticalVisibility(childTopPosY, childBottomPosY,
-                    parentVisibleTop, parentVisibleBottom) == false) {
-                // Child is not visible vertically at all...
+            if (!(childElement.getOffsetTop() - proximity < parent
+                    .getClientHeight() + parent.getScrollTop())
+                    && (childElement.getOffsetTop()
+                            + childElement.getOffsetHeight() + proximity > parent
+                                .getScrollTop())) {
                 return false;
             }
-
-            // TODO refactor X-check to method for testability!
 
             /* Horizontal */
             /*
@@ -187,8 +189,8 @@ public class VLazyLoadWrapper extends SimplePanel {
                 return false;
             }
 
+            child2 = parent;
             childElement = parent;
-            tempElement = parent;
         }
 
         return true;
@@ -230,13 +232,6 @@ public class VLazyLoadWrapper extends SimplePanel {
 
     public void setProximity(int proximity) {
         this.proximity = proximity;
-    }
-
-    public void ensurePlaceholderVisible() {
-        if (placeholder.getParentElement() == null) {
-            createPlaceholder();
-        }
-
     }
 
 }

@@ -12,8 +12,8 @@
 		 <servlet-class>com.vaadin.server.VaadinServlet</servlet-class>
         <init-param>
             <description>Vaadin UI</description>
-            <param-name>UIProvider</param-name>
-			<param-value>com.vaadin.lazyloadwrapper.dev.CustomUIProvider</param-value>
+            <param-name>UI</param-name>
+			<param-value>com.vaadin.lazyloadwrapper.LLWUI</param-value>
 		</init-param>
 		<init-param>
 			<description>

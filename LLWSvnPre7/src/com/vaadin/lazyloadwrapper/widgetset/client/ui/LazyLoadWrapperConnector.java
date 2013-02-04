@@ -50,7 +50,6 @@ public class LazyLoadWrapperConnector extends
 
     @Override
     public LLWState getState() {
-        // TODO Auto-generated method stub
         return (LLWState) super.getState();
     }
 
@@ -62,19 +61,22 @@ public class LazyLoadWrapperConnector extends
 
     @Override
     public void onConnectorHierarchyChange(ConnectorHierarchyChangeEvent event) {
-        // super.onConnectorHierarchyChange(event);
-        // TODO do sth here maby.. .
-        updateToThisLLW();
 
+        // TODO refactor me!
+        updateToThisLLW();
     }
 
     @Override
     public void onStateChanged(StateChangeEvent stateChangeEvent) {
         super.onStateChanged(stateChangeEvent);
 
+        // Don't delegate these to widget as we must keep track of the order in
+        // which they are set.
         getWidget().setPlaceHolderSize(getState().placeholderHeight,
                 getState().placeholderWidth);
 
+        // Don't delegate these to widget as we must keep track of the order in
+        // which they are set.
         if (getState().staticContainer) {
             getWidget().setHeight(getState().placeholderHeight);
             getWidget().setWidth(getState().placeholderWidth);
@@ -120,9 +122,17 @@ public class LazyLoadWrapperConnector extends
             // }
             // }
 
-            // if (getState().mode != MODE_LAZY_LOAD_DRAW) {
-            if (getState().clientSideIsVisible && getChildren().size() > 0) {
-                getWidget().lateDrawChild(getChildComponents());
+            if (getState().clientSideIsVisible && getChildren().size() > 0
+                    && getState().mode != MODE_LAZY_LOAD_DRAW) {
+                ComponentConnector childConnector = getChildComponents().get(0);
+                getWidget().lateDrawChild(childConnector.getWidget());
+
+                getLayoutManager().setNeedsMeasure(childConnector);
+                getLayoutManager().setNeedsMeasure(this);
+
+                // Must use layout later due to some components like Table...
+                getLayoutManager().layoutLater();
+
             } else {
                 getWidget().ensurePlaceholderVisible();
             }
@@ -138,16 +148,26 @@ public class LazyLoadWrapperConnector extends
 
         if (!getWidget().isAttached()) {
 
-            VConsole.log("The wrapper with PID: "
+            VConsole.log("The wrapper with ID: "
                     + getConnectorId()
-                    + " is no longer attached to the DOM, ignoring paint of child component... ");
+                    + " is no longer attached to the DOM, ignoring draw of child component... ");
             return;
         }
 
         if (getState().mode == MODE_LAZY_LOAD_DRAW) {
-            getWidget().lateDrawChild(getChildComponents());
-            getLayoutManager().setNeedsMeasure(this);
-            getLayoutManager().layoutNow();
+            if (getChildComponents().size() > 1) {
+                VConsole.error("LLW only supports one child component!");
+                throw new RuntimeException(
+                        "Only one lazy load component can be attached to a LLW!");
+            }
+            if (getChildComponents().size() != 0) {
+                ComponentConnector childConnector = getChildComponents().get(0);
+
+                getWidget().lateDrawChild(childConnector.getWidget());
+                getLayoutManager().setNeedsMeasure(childConnector);
+                getLayoutManager().setNeedsMeasure(this);
+                getLayoutManager().layoutLater();
+            }
         } else {
             // Inform the server that the component is visible...
             rpc.onWidgetVisible();
@@ -156,15 +176,17 @@ public class LazyLoadWrapperConnector extends
 
     public void checkVisibility() {
 
-        VConsole.log("LLW checking visibilty");
+        // VConsole.log("LLW checking visibilty");
 
         if (getWidget().isVisibleInsideParent()) {
             visibilityPollingTimer.removeLLW(this);
+            VConsole.log("LLW has determined itself visible...");
 
             if (getState().placeholderVisibleDelay == 0) {
                 widgetIsVible();
 
             } else {
+                VConsole.log("Starting visible delay timer...");
                 if (visibleDelayTimer == null) {
                     createVisibleDelayTimer();
                 }

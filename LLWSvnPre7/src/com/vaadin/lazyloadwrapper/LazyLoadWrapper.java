@@ -59,20 +59,21 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     public static final int MODE_LAZY_LOAD_FETCH = LazyLoadWrapperConnector.MODE_LAZY_LOAD_FETCH;
 
     /**
-     * This mode sets configures the LLW to send all child component data to the
-     * client side upon initialization but render the child component lazily
-     * when it becomes visible. <br>
+     * @since 0.1 alpha - disabled due to changes in client-side rendering logic
+     * 
+     *        This mode sets configures the LLW to send all child component data
+     *        to the client side upon initialization but render the child
+     *        component lazily when it becomes visible. <br>
      * <br>
-     * <i><b>NOTE</b> This mode should only be used with components that do not
-     * need to be updated before they are actually drawn as updates will not
-     * propagate to the child component before it's actually drawn. </i>
+     *        <i><b>NOTE</b> This mode should only be used with components that
+     *        do not need to be updated before they are actually drawn as
+     *        updates will not propagate to the child component before it's
+     *        actually drawn. </i>
+     * 
+     * 
+     * 
      */
     public static final int MODE_LAZY_LOAD_DRAW = LazyLoadWrapperConnector.MODE_LAZY_LOAD_DRAW;
-
-    // /**
-    // * Current mode of the LLW
-    // */
-    // private int mode = MODE_LAZY_LOAD_FETCH;
 
     private Component lazyloadComponent = null;
 
@@ -712,65 +713,11 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
         return getState().clientSideIsVisible;
     }
 
-    /*
-     * Server to Client communication
-     */
-
-    // @Override
-    // public void paintContent(PaintTarget target) throws PaintException {
-    // // super.paintContent(target);
-    //
-    // target.addAttribute(VLazyLoadWrapper.WIDGET_LOAD_PROXIMITY, proximity);
-    // target.addAttribute(VLazyLoadWrapper.WIDGET_LOAD_VISIBLE_DELAY,
-    // placeholderVisibleDelay);
-    // target.addAttribute(VLazyLoadWrapper.PLACEHOLDER_HEIGHT,
-    // placeholderHeight);
-    // target.addAttribute(VLazyLoadWrapper.PLACEHOLDER_WIDTH,
-    // placeholderWidth);
-    // target.addAttribute(VLazyLoadWrapper.WRAPPER_MODE, mode);
-    // target.addAttribute(VLazyLoadWrapper.STATIC_CONTAINER, staticContainer);
-    // target.addAttribute(VLazyLoadWrapper.WIDGET_VISIBLE_ID,
-    // clientSideIsVisible);
-    // target.addAttribute(VLazyLoadWrapper.WRAPPER_AUTOREINIT_ON_REATTACH,
-    // autoReinitLazyLoad);
-    //
-    // if ((clientSideIsVisible || mode == MODE_LAZY_LOAD_DRAW)
-    // && lazyloadComponent != null) {
-    //
-    // // lazyloadComponent. paint(target);
-    //
-    // }
-    //
-    // }
-
-    /**
-     * Receive and handle events and other variable changes from the client.
-     * 
-     * {@inheritDoc}
-     */
-
-    // @Override
-    // public void changeVariables(Object source, Map<String, Object> variables)
-    // {
-    // // super.changeVariables(source, variables);
-    //
-    // if (variables.containsKey(VLazyLoadWrapper.WIDGET_VISIBLE_ID)) {
-    //
-    // Object visible = variables.get(VLazyLoadWrapper.WIDGET_VISIBLE_ID);
-    //
-    // clientSideIsVisible = ((Boolean) visible).booleanValue();
-    //
-    // setClientSideIsVisible(clientSideIsVisible);
-    //
-    // }
-    //
-    // }
-
     @Deprecated
     // replaced by get iterator
     @Override
     public Iterator<Component> getComponentIterator() {
-        System.out.println("Iterating thrhough components on server");
+        // System.out.println("Iterating thrhough components on server");
         Iterator<Component> iterator = new Iterator<Component>() {
 
             private boolean first = lazyloadComponent == null;
@@ -782,11 +729,11 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
             public Component next() {
                 if (!first) {
-                    System.out.println("Returning lazy load component");
+                    // System.out.println("Returning lazy load component");
                     first = true;
                     return lazyloadComponent;
                 } else {
-                    System.out.println("Retruning null component");
+                    // System.out.println("Retruning null component");
                     return null;
                 }
             }
@@ -860,13 +807,11 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
     @Override
     public boolean isRendered(Component childComponent) {
-        System.out.println("Using selective renderer");
         if (getState().clientSideIsVisible
                 || getState().mode == MODE_LAZY_LOAD_DRAW) {
             return true;
         }
 
-        System.out.println("Selectiver renderer returning false");
         return false;
     }
 }
