@@ -83,6 +83,23 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      */
     private LazyLoadComponentProvider childProvider = null;
 
+    /**
+     * Create extension/inline override to enable debug mode, for instance like
+     * this:
+     * 
+     * <code><br/><br/>
+     *  new LazyLoadWrapper(){ </br>
+     *      { <br/>
+     *          debug = true;<br/>
+     *      }<br/>
+     *  };<br/>
+     *   
+     * </code>
+     * 
+     * 
+     */
+    protected boolean debug = false;
+
     private LLWRpc serverRpc = new LLWRpc() {
 
         @Override
@@ -813,5 +830,11 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
         }
 
         return false;
+    }
+
+    @Override
+    public void beforeClientResponse(boolean initial) {
+        super.beforeClientResponse(initial);
+        getState().debug = debug;
     }
 }

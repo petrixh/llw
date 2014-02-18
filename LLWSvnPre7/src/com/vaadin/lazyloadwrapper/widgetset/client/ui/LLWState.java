@@ -43,4 +43,11 @@ public class LLWState extends AbstractComponentState {
     public String placeholderHeight = "100px";
     public String placeholderWidth = "100px";
 
+    /**
+     * Debug flag to indicate that the LLW should print additional debug
+     * information.
+     */
+    @DelegateToWidget
+    public boolean debug = false;
+
 }

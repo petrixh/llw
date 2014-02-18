@@ -81,6 +81,20 @@ public class LazyLoadWrapperConnector extends
             getWidget().setHeight(getState().placeholderHeight);
             getWidget().setWidth(getState().placeholderWidth);
         }
+
+        if (stateChangeEvent.hasPropertyChanged("clientSideIsVisible")) {
+            if (getState().clientSideIsVisible == false) {
+                if (getState().debug) {
+                    VConsole.log("ClientSideIsVisible set to false, readding LLW to timer...");
+                }
+                visibilityPollingTimer.addLLW(this);
+            } else {
+                if (getState().debug) {
+                    VConsole.log("ClientSideIsVisible set to true, removing LLW to timer...");
+                    visibilityPollingTimer.removeLLW(this);
+                }
+            }
+        }
     }
 
     /**
@@ -144,7 +158,9 @@ public class LazyLoadWrapperConnector extends
      * Called when we have determined that the wrapper is visible
      */
     private void widgetIsVible() {
-        VConsole.log("In WIDGETISVISIBLE");
+        if (getState().debug) {
+            VConsole.log("In WIDGETISVISIBLE");
+        }
 
         if (!getWidget().isAttached()) {
 
@@ -180,13 +196,17 @@ public class LazyLoadWrapperConnector extends
 
         if (getWidget().isVisibleInsideParent()) {
             visibilityPollingTimer.removeLLW(this);
-            VConsole.log("LLW has determined itself visible...");
+            if (getState().debug) {
+                VConsole.log("LLW has determined itself visible...");
+            }
 
             if (getState().placeholderVisibleDelay == 0) {
                 widgetIsVible();
 
             } else {
-                VConsole.log("Starting visible delay timer...");
+                if (getState().debug) {
+                    VConsole.log("Starting visible delay timer...");
+                }
                 if (visibleDelayTimer == null) {
                     createVisibleDelayTimer();
                 }

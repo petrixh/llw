@@ -34,7 +34,9 @@ public class LLWPoller extends Timer {
      */
     public synchronized void addLLW(LazyLoadWrapperConnector llw) {
 
-        listeners.add(llw);
+        if (!listeners.contains(llw)) {
+            listeners.add(llw);
+        }
         if (listeners.size() == 1) {
             scheduleRepeating(1250);
         }

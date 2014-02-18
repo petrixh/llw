@@ -4,7 +4,6 @@ import com.google.gwt.dom.client.Element;
 import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
-import com.vaadin.client.ApplicationConnection;
 import com.vaadin.client.VConsole;
 
 /**
@@ -37,13 +36,8 @@ public class VLazyLoadWrapper extends SimplePanel {
     public static final String PLACEHOLDER_WIDTH = "placeholderwidth";
     public static final String WRAPPER_MODE = "wrappermode";
 
-    /** The client side widget identifier */
-    protected String wrappersPaintableId;
-
-    /** Reference to the server connection object. */
-    protected ApplicationConnection client;
-
     private int proximity = 0;
+    private boolean debug = false;
 
     private Element placeholder = null;
     private boolean recentlyAttached = false;
@@ -147,47 +141,63 @@ public class VLazyLoadWrapper extends SimplePanel {
                 child2 = parent;
                 continue;
             }
-            // if (parent.getStyle().getOverflow().equalsIgnoreCase("visible")
-            // || parent.getStyle().getOverflow().equalsIgnoreCase("")) {
-            // childElement = parent;
-            // continue;
-            // }
 
             /* Vertical */
             /*
              * Check that the child is inside the vert. view area of the parent
              * if not, return visibility as false
              */
-            // NEG: child top < parent view area bottom && child bottom > parent
-            // view area top
-            int childOffsetTop = childElement.getOffsetTop();
-            int parentHeight = parent.getClientHeight() + parent.getScrollTop();
 
-            int childOffsetBottom = childElement.getOffsetTop()
-                    + childElement.getOffsetHeight();
-            int parentBottom = parent.getScrollTop();
+            int parentTopY = parent.getScrollTop();
+            int parentBottomY = parent.getClientHeight() + parentTopY;
 
-            if (!(childElement.getOffsetTop() - proximity < parent
-                    .getClientHeight() + parent.getScrollTop())
-                    && (childElement.getOffsetTop()
-                            + childElement.getOffsetHeight() + proximity > parent
-                                .getScrollTop())) {
+            int parentTopYProx = parentTopY - proximity;
+            int parentBottomYProx = parentBottomY + proximity;
+
+            int childTopY = childElement.getOffsetTop();
+            int childBottomY = childElement.getOffsetHeight() + childTopY;
+
+            if (debug) {
+                VConsole.log("ChildTopY: " + childTopY + " ParentTopY: "
+                        + parentTopY + " parentTopYProx: " + parentTopYProx);
+                VConsole.log("ChildBottomY: " + childBottomY
+                        + " ParentBottomY: " + parentBottomY
+                        + " ParentBottomYProx" + parentBottomYProx);
+                ;
+                VConsole.log("---------------");
+            }
+
+            if (!checkVerticalVisibility(childTopY, childBottomY,
+                    parentTopYProx, parentBottomYProx)) {
+                if (debug) {
+                    VConsole.log("Child not visible...");
+                }
                 return false;
             }
 
-            /* Horizontal */
-            /*
-             * Check that the child is inside the horiz. view area of the parent
-             * if not, return visibility as false
-             */
-            // NEG: child left < parent right && child right > parent left
-            if (!((childElement.getOffsetLeft() - proximity) < parent
-                    .getScrollLeft() + parent.getClientWidth())
-                    && (childElement.getOffsetLeft()
-                            + childElement.getOffsetWidth() + proximity > parent
-                                .getScrollLeft())) {
-                return false;
-            }
+            // if (!(childElement.getOffsetTop() - proximity < parent
+            // .getClientHeight() + parent.getScrollTop())
+            // && (childElement.getOffsetTop()
+            // + childElement.getOffsetHeight() + proximity > parent
+            // .getScrollTop())) {
+            // return false;
+            // }
+
+            // TODO Refactor Horiz checking..
+            // /* Horizontal */
+            // /*
+            // * Check that the child is inside the horiz. view area of the
+            // parent
+            // * if not, return visibility as false
+            // */
+            // // NEG: child left < parent right && child right > parent left
+            // if (!((childElement.getOffsetLeft() - proximity) < parent
+            // .getScrollLeft() + parent.getClientWidth())
+            // && (childElement.getOffsetLeft()
+            // + childElement.getOffsetWidth() + proximity > parent
+            // .getScrollLeft())) {
+            // return false;
+            // }
 
             child2 = parent;
             childElement = parent;
@@ -232,6 +242,14 @@ public class VLazyLoadWrapper extends SimplePanel {
 
     public void setProximity(int proximity) {
         this.proximity = proximity;
+    }
+
+    public void setDebug(boolean debug) {
+        this.debug = debug;
+    }
+
+    public boolean isDebug() {
+        return debug;
     }
 
 }

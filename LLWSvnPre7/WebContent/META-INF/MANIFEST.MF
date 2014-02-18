@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Implementation-Title: LazyLoadWrapper
-Implementation-Version: 0.1 alpha
+Implementation-Version: 0.2 alpha
 Vaadin-Package-Version: 1
+Class-Path: 
 Vaadin-Widgetsets: com.vaadin.lazyloadwrapper.widgetset.LazyLoadWrappe
  rWidgetset
-Class-Path: 
 
