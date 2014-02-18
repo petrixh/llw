@@ -356,7 +356,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
      *            provide the <i>component</i> when it's needed.
      */
     public LazyLoadWrapper(LazyLoadComponentProvider childProvider) {
-        super();
+        this();
         this.childProvider = childProvider;
     }
 
