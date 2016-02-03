@@ -1,0 +1,105 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <groupId>org.vaadin.addons</groupId>
+   <artifactId>lazyloadwrapper</artifactId>
+   <version>1.1.1-SNAPSHOT</version>
+   <packaging>jar</packaging>
+
+   <name>LazyLoadWrapper</name>
+
+   <properties>
+      <vaadin.extraJvmArgs>-Xmx512M -Xss2M</vaadin.extraJvmArgs>
+      <vaadin.draftCompile>false</vaadin.draftCompile>
+      <vaadin.style>OBF</vaadin.style>
+      <vaadin.version>7.5.7</vaadin.version>
+   </properties>
+
+   <dependencies>
+      <dependency>
+         <groupId>com.vaadin</groupId>
+         <artifactId>vaadin-server</artifactId>
+	 <version>${vaadin.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.vaadin</groupId>
+         <artifactId>vaadin-client</artifactId>
+         <scope>provided</scope>
+	 <version>${vaadin.version}</version>
+      </dependency>
+      <dependency>
+         <groupId>com.vaadin</groupId>
+         <artifactId>vaadin-client-compiler</artifactId>
+         <scope>provided</scope>
+	 <version>${vaadin.version}</version>
+      </dependency>
+   </dependencies>
+
+   <build>
+      <plugins>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-jar-plugin</artifactId>
+            <configuration>
+               <archive>
+                  <index>true</index>
+                  <manifest>
+                     <addClasspath>true</addClasspath>
+                     <addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+                  </manifest>
+                  <manifestEntries>
+                     <Vaadin-Package-Version>1</Vaadin-Package-Version>
+                     <Implementation-Title>LazyLoadWrapper Widgets</Implementation-Title>
+                     <Vaadin-Widgetsets>com.vaadin.lazyloadwrapper.widgetset.LazyLoadWrapperWidgetset</Vaadin-Widgetsets>
+                  </manifestEntries>
+               </archive>
+            </configuration>
+         </plugin>
+
+         <plugin>
+            <groupId>com.vaadin</groupId>
+            <artifactId>vaadin-maven-plugin</artifactId>
+            <configuration>
+               <extraJvmArgs>${vaadin.extraJvmArgs}</extraJvmArgs><!--$NO-MVN-MAN-VER$ -->
+               <webappDirectory>${project.build.directory}/classes/VAADIN/widgetsets</webappDirectory>
+               <noServer>true</noServer>
+               <!-- Remove draftCompile when project is ready -->
+               <draftCompile>${vaadin.draftCompile}</draftCompile>
+               <compileReport>true</compileReport>
+               <style>${vaadin.style}</style>
+               <strict>true</strict>
+               <modules>
+                  <module>com.vaadin.lazyloadwrapper.widgetset.LazyLoadWrapperWidgetset</module>
+               </modules>
+            </configuration>
+            <executions>
+               <execution>
+                  <configuration>
+                     <!-- if you don't specify any modules, the plugin will find them -->
+                     <modules>
+                        <module>com.vaadin.lazyloadwrapper.widgetset.LazyLoadWrapperWidgetset</module>
+                     </modules>
+                  </configuration>
+                  <goals>
+                     <goal>clean</goal>
+                     <goal>resources</goal>
+                     <goal>update-theme</goal>
+                     <goal>compile</goal>
+                  </goals>
+               </execution>
+            </executions>
+         </plugin>
+      </plugins>
+
+      <!-- GWT compiler requires additional sources: http://code.google.com/p/gwt-maven/wiki/M2FAQ -->
+      <resources>
+         <resource>
+            <directory>src/main/java</directory>
+         </resource>
+         <resource>
+            <directory>src/main/resources</directory>
+         </resource>
+      </resources>
+   </build>
+</project>
