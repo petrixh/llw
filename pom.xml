@@ -14,25 +14,26 @@
       <vaadin.draftCompile>false</vaadin.draftCompile>
       <vaadin.style>OBF</vaadin.style>
       <vaadin.version>7.5.7</vaadin.version>
+      <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 
    <dependencies>
       <dependency>
          <groupId>com.vaadin</groupId>
          <artifactId>vaadin-server</artifactId>
-	 <version>${vaadin.version}</version>
+         <version>${vaadin.version}</version>
       </dependency>
       <dependency>
          <groupId>com.vaadin</groupId>
          <artifactId>vaadin-client</artifactId>
          <scope>provided</scope>
-	 <version>${vaadin.version}</version>
+         <version>${vaadin.version}</version>
       </dependency>
       <dependency>
          <groupId>com.vaadin</groupId>
          <artifactId>vaadin-client-compiler</artifactId>
          <scope>provided</scope>
-	 <version>${vaadin.version}</version>
+         <version>${vaadin.version}</version>
       </dependency>
    </dependencies>
 
@@ -40,7 +41,18 @@
       <plugins>
          <plugin>
             <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <version>3.1</version>
+            <configuration>
+               <source>1.8</source>
+               <target>1.8</target>
+            </configuration>
+         </plugin>
+
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-jar-plugin</artifactId>
+            <version>2.4</version>
             <configuration>
                <archive>
                   <index>true</index>
@@ -60,6 +72,7 @@
          <plugin>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-maven-plugin</artifactId>
+            <version>7.6.1</version>
             <configuration>
                <extraJvmArgs>${vaadin.extraJvmArgs}</extraJvmArgs><!--$NO-MVN-MAN-VER$ -->
                <webappDirectory>${project.build.directory}/classes/VAADIN/widgetsets</webappDirectory>
@@ -84,7 +97,6 @@
                   <goals>
                      <goal>clean</goal>
                      <goal>resources</goal>
-                     <goal>update-theme</goal>
                      <goal>compile</goal>
                   </goals>
                </execution>
