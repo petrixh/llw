@@ -14,6 +14,7 @@ import com.vaadin.lazyloadwrapper.widgetset.client.ui.gwt.VLazyLoadWrapper;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(LazyLoadWrapper.class)
+@SuppressWarnings({"javadoc"})
 public class LazyLoadWrapperConnector extends
         AbstractComponentContainerConnector {
 

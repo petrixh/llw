@@ -1,7 +1,7 @@
 package com.vaadin.lazyloadwrapper;
 
 import java.io.Serializable;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 
 import com.vaadin.lazyloadwrapper.widgetset.client.ui.LLWRpc;
@@ -48,7 +48,7 @@ import com.vaadin.ui.SelectiveRenderer;
  * <br>
  */
 
-@SuppressWarnings("serial")
+@SuppressWarnings({"serial", "javadoc"})
 public class LazyLoadWrapper extends AbstractComponentContainer implements
         SelectiveRenderer {
 
@@ -730,6 +730,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
         return getState().clientSideIsVisible;
     }
 
+    @SuppressWarnings("deprecation")
     @Deprecated
     // replaced by get iterator
     @Override
@@ -739,12 +740,14 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
 
             private boolean first = lazyloadComponent == null;
 
-            public boolean hasNext() {
+            @Override
+	    public boolean hasNext() {
 
                 return !first;
             }
 
-            public Component next() {
+            @Override
+	    public Component next() {
                 if (!first) {
                     // System.out.println("Returning lazy load component");
                     first = true;
@@ -755,7 +758,8 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
                 }
             }
 
-            public void remove() {
+            @Override
+	    public void remove() {
                 throw new UnsupportedOperationException();
 
             }
@@ -765,6 +769,7 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
         return iterator;
     }
 
+    @Override
     public void replaceComponent(Component oldComponent, Component newComponent) {
         throw new UnsupportedOperationException();
 
@@ -813,13 +818,10 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
     @Override
     public Iterator<Component> iterator() {
 
-        if (getState().clientSideIsVisible
-                || getState().mode == MODE_LAZY_LOAD_DRAW) {
-            return getComponentIterator();
-        } else {
-            return new ArrayList().iterator();
+        if (!getState().clientSideIsVisible && getState().mode != MODE_LAZY_LOAD_DRAW) {
+            return Collections.emptyIterator();
         }
-
+        return getComponentIterator();
     }
 
     @Override
