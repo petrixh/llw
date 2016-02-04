@@ -697,22 +697,28 @@ public class LazyLoadWrapper extends AbstractComponentContainer implements
             if (childProvider != null) {
                 lazyloadComponent = childProvider.onComponentVisible();
             }
-
-            // Attach child to container.
-            if (lazyloadComponent != null) {
-                super.addComponent(lazyloadComponent);
-                lazyloadComponent.markAsDirty();
-            }
+            showLoadedComponent(lazyloadComponent);
 
         } else {
-            if (lazyloadComponent != null
-                    && lazyloadComponent.getParent() != null
-                    && lazyloadComponent.getParent().equals(this)) {
-                super.removeComponent(lazyloadComponent);
-
-            }
+            hideLoadedComponent(lazyloadComponent);
         }
 
+    }
+
+    protected void showLoadedComponent(@SuppressWarnings("hiding") Component lazyloadComponent) {
+        // Attach child to container.
+        if (lazyloadComponent != null) {
+            super.addComponent(lazyloadComponent);
+            lazyloadComponent.markAsDirty();
+        }
+    }
+
+    protected void hideLoadedComponent(@SuppressWarnings("hiding") Component lazyloadComponent) {
+        if (lazyloadComponent != null
+                && lazyloadComponent.getParent() != null
+                && lazyloadComponent.getParent().equals(this)) {
+            super.removeComponent(lazyloadComponent);
+        }
     }
 
     /**
