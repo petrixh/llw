@@ -1,6 +1,11 @@
 package com.vaadin.lazyloadwrapper.widgetset.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
@@ -140,6 +145,11 @@ public class LazyLoadWrapperConnector extends
             if (getState().clientSideIsVisible && getChildren().size() > 0
                     && getState().mode != MODE_LAZY_LOAD_DRAW) {
                 ComponentConnector childConnector = getChildComponents().get(0);
+				
+				final String caption = childConnector.getState().caption;
+				if (caption != null && !"".equals(caption)) {
+					addCaptionToWidget(childConnector.getWidget(), caption);
+				}
                 getWidget().lateDrawChild(childConnector.getWidget());
 
                 getLayoutManager().setNeedsMeasure(childConnector);
@@ -154,6 +164,17 @@ public class LazyLoadWrapperConnector extends
         }
 
     }
+	
+	private void addCaptionToWidget(Widget widget, String caption) {
+		final Element captionNode = DOM.createDiv();
+		final Element captionText = DOM.createSpan();
+		captionNode.appendChild(captionText);
+		captionText.setInnerHTML(caption);
+
+		captionNode.setClassName(VLazyLoadWrapper.CAPTION_WRAP_STYLE);
+		captionText.setClassName(VLazyLoadWrapper.CAPTION_TEXT_STYLE);
+		widget.getElement().appendChild(captionNode);
+	}
 
     /**
      * Called when we have determined that the wrapper is visible

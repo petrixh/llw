@@ -26,6 +26,8 @@ public class VLazyLoadWrapper extends SimplePanel {
     /*- Set the CSS class name to allow styling. */
     public static final String CLASSNAME = "v-lazyloadingwrapper";
     public static final String LOADING_CLASSNAME = "v-lazyloadingwrapper-loading";
+	public static final String CAPTION_WRAP_STYLE = "v-caption";
+	public static final String CAPTION_TEXT_STYLE = "v-captiontext";
 
     /* The ID's used in server communication */
     public static final String WIDGET_VISIBLE_ID = "widgetvisible";
