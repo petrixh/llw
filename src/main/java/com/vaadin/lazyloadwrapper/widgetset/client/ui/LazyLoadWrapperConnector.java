@@ -30,6 +30,9 @@ public class LazyLoadWrapperConnector extends
     public static final int MODE_LAZY_LOAD_FETCH = 1;
     public static final int MODE_LAZY_LOAD_DRAW = 2;
 
+    private final Element captionNode = DOM.createDiv();
+    private final Element captionText = DOM.createSpan();
+
     /** Polling timer used to check for visibility */
     protected static LLWPoller visibilityPollingTimer;
 
@@ -146,10 +149,10 @@ public class LazyLoadWrapperConnector extends
                     && getState().mode != MODE_LAZY_LOAD_DRAW) {
                 ComponentConnector childConnector = getChildComponents().get(0);
 				
-				final String caption = childConnector.getState().caption;
-				if (caption != null && !"".equals(caption)) {
-					addCaptionToWidget(childConnector.getWidget(), caption);
-				}
+                final String caption = childConnector.getState().caption;
+                if (caption != null && !"".equals(caption)) {
+                    setChildCaption(caption);
+                }
                 getWidget().lateDrawChild(childConnector.getWidget());
 
                 getLayoutManager().setNeedsMeasure(childConnector);
@@ -165,16 +168,14 @@ public class LazyLoadWrapperConnector extends
 
     }
 	
-	private void addCaptionToWidget(Widget widget, String caption) {
-		final Element captionNode = DOM.createDiv();
-		final Element captionText = DOM.createSpan();
-		captionNode.appendChild(captionText);
-		captionText.setInnerHTML(caption);
+    private void setChildCaption(String caption) {
+        captionNode.appendChild(captionText);
+        captionText.setInnerHTML(caption);
 
-		captionNode.setClassName(VLazyLoadWrapper.CAPTION_WRAP_STYLE);
-		captionText.setClassName(VLazyLoadWrapper.CAPTION_TEXT_STYLE);
-		widget.getElement().appendChild(captionNode);
-	}
+        captionNode.setClassName(VLazyLoadWrapper.CAPTION_WRAP_STYLE);
+        captionText.setClassName(VLazyLoadWrapper.CAPTION_TEXT_STYLE);
+        getWidget().getElement().appendChild(captionNode);
+    }
 
     /**
      * Called when we have determined that the wrapper is visible
