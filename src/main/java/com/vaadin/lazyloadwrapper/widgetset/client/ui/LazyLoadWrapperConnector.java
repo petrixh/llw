@@ -38,6 +38,12 @@ public class LazyLoadWrapperConnector extends
 
     LLWRpc rpc = RpcProxy.create(LLWRpc.class, this);
 
+    public LazyLoadWrapperConnector() {   
+        captionNode.setClassName(VLazyLoadWrapper.CAPTION_WRAP_STYLE);
+        captionText.setClassName(VLazyLoadWrapper.CAPTION_TEXT_STYLE);
+        getWidget().getElement().appendChild(captionNode);
+    }
+
     @Override
     protected Widget createWidget() {
         if (visibilityPollingTimer == null) {
@@ -152,6 +158,8 @@ public class LazyLoadWrapperConnector extends
                 final String caption = childConnector.getState().caption;
                 if (caption != null && !"".equals(caption)) {
                     setChildCaption(caption);
+                } else {
+                    clearChildCaption();
                 }
                 getWidget().lateDrawChild(childConnector.getWidget());
 
@@ -169,12 +177,14 @@ public class LazyLoadWrapperConnector extends
     }
 	
     private void setChildCaption(String caption) {
-        captionNode.appendChild(captionText);
         captionText.setInnerHTML(caption);
+        captionNode.appendChild(captionText);
+    }
 
-        captionNode.setClassName(VLazyLoadWrapper.CAPTION_WRAP_STYLE);
-        captionText.setClassName(VLazyLoadWrapper.CAPTION_TEXT_STYLE);
-        getWidget().getElement().appendChild(captionNode);
+    private void clearChildCaption() {
+        if (captionNode.isOrHasChild(captionText)) {
+            captionNode.removeChild(captionText);
+        }
     }
 
     /**
