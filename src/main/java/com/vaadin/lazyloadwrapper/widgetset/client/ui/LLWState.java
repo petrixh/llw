@@ -1,9 +1,10 @@
 package com.vaadin.lazyloadwrapper.widgetset.client.ui;
 
-import com.vaadin.shared.AbstractComponentState;
 import com.vaadin.shared.annotations.DelegateToWidget;
+import com.vaadin.shared.ui.AbstractComponentContainerState;
 
-public class LLWState extends AbstractComponentState {
+public class LLWState extends AbstractComponentContainerState
+{
 
     /**
      * Current mode of the LLW
