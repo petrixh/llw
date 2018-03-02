@@ -13,7 +13,7 @@
       <vaadin.extraJvmArgs>-Xmx512M -Xss2M</vaadin.extraJvmArgs>
       <vaadin.draftCompile>false</vaadin.draftCompile>
       <vaadin.style>OBF</vaadin.style>
-      <vaadin.version>8.2.0</vaadin.version>
+      <vaadin.version>8.3.0</vaadin.version>
       <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
    </properties>
 
