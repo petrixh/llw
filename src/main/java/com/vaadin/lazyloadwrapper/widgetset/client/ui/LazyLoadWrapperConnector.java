@@ -1,6 +1,11 @@
 package com.vaadin.lazyloadwrapper.widgetset.client.ui;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.DivElement;
+import com.google.gwt.dom.client.Document;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.dom.client.Element;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.Timer;
 import com.google.gwt.user.client.ui.Widget;
 import com.vaadin.client.ComponentConnector;
@@ -14,6 +19,7 @@ import com.vaadin.lazyloadwrapper.widgetset.client.ui.gwt.VLazyLoadWrapper;
 import com.vaadin.shared.ui.Connect;
 
 @Connect(LazyLoadWrapper.class)
+@SuppressWarnings({"javadoc"})
 public class LazyLoadWrapperConnector extends
         AbstractComponentContainerConnector {
 
@@ -24,10 +30,19 @@ public class LazyLoadWrapperConnector extends
     public static final int MODE_LAZY_LOAD_FETCH = 1;
     public static final int MODE_LAZY_LOAD_DRAW = 2;
 
+    private final Element captionNode = DOM.createDiv();
+    private final Element captionText = DOM.createSpan();
+
     /** Polling timer used to check for visibility */
     protected static LLWPoller visibilityPollingTimer;
 
     LLWRpc rpc = RpcProxy.create(LLWRpc.class, this);
+
+    public LazyLoadWrapperConnector() {   
+        captionNode.setClassName(VLazyLoadWrapper.CAPTION_WRAP_STYLE);
+        captionText.setClassName(VLazyLoadWrapper.CAPTION_TEXT_STYLE);
+        getWidget().getElement().appendChild(captionNode);
+    }
 
     @Override
     protected Widget createWidget() {
@@ -139,6 +154,13 @@ public class LazyLoadWrapperConnector extends
             if (getState().clientSideIsVisible && getChildren().size() > 0
                     && getState().mode != MODE_LAZY_LOAD_DRAW) {
                 ComponentConnector childConnector = getChildComponents().get(0);
+				
+                final String caption = childConnector.getState().caption;
+                if (caption != null && !"".equals(caption)) {
+                    setChildCaption(caption);
+                } else {
+                    clearChildCaption();
+                }
                 getWidget().lateDrawChild(childConnector.getWidget());
 
                 getLayoutManager().setNeedsMeasure(childConnector);
@@ -152,6 +174,17 @@ public class LazyLoadWrapperConnector extends
             }
         }
 
+    }
+	
+    private void setChildCaption(String caption) {
+        captionText.setInnerHTML(caption);
+        captionNode.appendChild(captionText);
+    }
+
+    private void clearChildCaption() {
+        if (captionNode.isOrHasChild(captionText)) {
+            captionNode.removeChild(captionText);
+        }
     }
 
     /**

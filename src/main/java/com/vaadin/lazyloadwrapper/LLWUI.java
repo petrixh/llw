@@ -1,13 +1,13 @@
 package com.vaadin.lazyloadwrapper;
 
-import com.vaadin.lazyloadwrapper.LazyLoadWrapper.LazyLoadComponentProvider;
 import com.vaadin.server.VaadinRequest;
 import com.vaadin.ui.Component;
 import com.vaadin.ui.CssLayout;
-import com.vaadin.ui.Label;
+import com.vaadin.v7.ui.Label;
 import com.vaadin.ui.Panel;
 import com.vaadin.ui.UI;
 
+@SuppressWarnings({ "javadoc", "serial" })
 public class LLWUI extends UI {
 
     @Override
@@ -44,27 +44,8 @@ public class LLWUI extends UI {
                 "This component was lazily loaded");
         lazyLoadComponent.setSizeUndefined();
 
-        LazyLoadWrapper llw = new LazyLoadWrapper(
-                new LazyLoadComponentProvider() {
+        LazyLoadWrapper llw = new LazyLoadWrapper(() -> lazyLoadComponent);
 
-                    @Override
-                    public Component onComponentVisible() {
-                        System.out.println("Component fetched...");
-                        return lazyLoadComponent;
-                    }
-                }) {
-
-            {
-                debug = true;
-            }
-
-        };
-        
-        new LazyLoadWrapper(){
-            {
-             debug = true;    
-            }
-        }; 
         llw.setProximity(100);
         // Set placeholder visible for 5 seconds
         llw.setPlaceholderVisibleDelay(5000);
