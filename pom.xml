@@ -72,7 +72,7 @@
          <plugin>
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-maven-plugin</artifactId>
-            <version>8.2.0</version>
+            <version>8.3.0</version>
             <configuration>
                <extraJvmArgs>${vaadin.extraJvmArgs}</extraJvmArgs><!--$NO-MVN-MAN-VER$ -->
                <webappDirectory>${project.build.directory}/classes/VAADIN/widgetsets</webappDirectory>
